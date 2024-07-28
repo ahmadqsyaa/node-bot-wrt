@@ -1,0 +1,128 @@
+#!/bin/bash
+# ModemManager SMS Client v1.0
+# Created by Satria K.
+# Homepage : https://github.com/satriakanda/mmsms
+
+mmcli_info=$(mmcli -L 2>&1);
+if [[ "$mmcli_info" == "No modems were found" ]]; then
+    echo "Error: Modem is not detected by ModemManager"
+    exit 1
+else
+    if [[ "$mmcli_info" =~ ((/org/freedesktop/ModemManager[0-9]+)/Modem/([0-9]+) \[([^\]]+?)\] (.+)) ]]; then
+        modem_path=${BASH_REMATCH[2]}
+        modem_id=${BASH_REMATCH[3]}
+        modem_manufacturer=${BASH_REMATCH[4]}
+        modem_model=${BASH_REMATCH[5]}
+    else
+        echo "Error: Modem is not recognized"
+        exit 1
+    fi
+fi
+
+function read_sms() {
+    sms_list=$(mmcli -m "$modem_id" --messaging-list-sms)
+    if [[ "$sms_list" == "No sms messages were found" ]]; then
+        echo "No SMS messages were found from modem [$modem_model]"
+    else
+        sms_count=$(echo "$sms_list" | wc -l)
+        echo "Total $sms_count SMS messages were found from modem [$modem_model]"
+        n=0
+        IFS=$'\n'
+        rows=($sms_list)
+        for sms_info in "${rows[@]}"; do
+            ((n++))
+            (( $n > 1 )) && echo ""
+            sms_id=$(echo "$sms_info" | grep /SMS/ | sed -r "s/.+\/SMS\/([0-9]+).+/\1/")
+            echo "  [$n] SMS ID Number: $sms_id"
+            message=$(mmcli -m "$modem_id" --sms "$sms_id")
+            if [ -n "$message" ]; then
+                if [[ "$message" == *"pdu type: status-report"* ]]; then
+                    echo "      pdu type: status-report"
+                elif [[ "$message" == *"delivery report: requested"* ]]; then
+                    echo "      delivery report: requested"
+                else
+                    echo "$message"
+                fi
+            fi
+        done
+    fi
+}
+
+function delete_sms() {
+    if [ -n "${1}" ]; then
+        echo -n "Deleting SMS ID Number: ${1} => "
+        mmcli -m ${modem_id} --messaging-delete-sms=${modem_path}/SMS/${1}
+    else
+        sms_list=$(mmcli -m "$modem_id" --messaging-list-sms)
+        if [[ "$sms_list" == "No sms messages were found" ]]; then
+            echo "No SMS messages were found from modem [$modem_model]"
+        else
+                echo "Delete all $sms_count SMS messages from modem [$modem_model]"
+                n=0
+                IFS=$'\n'
+                rows=($sms_list)
+                for sms_info in "${rows[@]}"; do
+                    ((n++))
+                    sms_id=$(echo "$sms_info" | grep /SMS/ | sed -r "s/.+\/SMS\/([0-9]+).+/\1/")
+                    if [ -n "$sms_id" ]; then
+                        echo -n "[$n] Deleting SMS ID Number: $sms_id => "
+                        mmcli -m ${modem_id} --messaging-delete-sms=${modem_path}/SMS/${sms_id}
+                    else
+                        echo "No SMS messages were found from modem [$modem_model]"
+                    fi
+                done
+        fi
+    fi
+}
+
+function send_sms() {
+    to="${1}"
+    if [[ ! "$to" =~ ^\+?[0-9]+$ ]]; then
+        echo "Please provide the receiver number (08xxxx or +628xxx)"
+        exit 1
+    fi
+    message="${@:2}"
+    if [ -z "$message" ]; then
+        echo "Please provide the message"
+        exit 1
+    fi
+    sms_create=$(mmcli -m "$modem_id"  --messaging-create-sms="number='${to}',text='${message}'")
+    sms_id=$(echo "$sms_create" | grep /SMS/ | sed -r "s/.+\/SMS\/([0-9]+)/\1/")
+    echo "SMS ID Number: $sms_id"
+    mmcli -s ${sms_id} --send
+}
+
+function usage() {
+    echo "###########################################"
+    echo "#####   ModemManager SMS Client v1.0  #####"
+    echo "#####       Created by Satria K.      #####"
+    echo "###########################################"
+    echo "Model        : $modem_model"
+    echo "Manufacturer : $modem_manufacturer"
+    echo "Path         : $modem_path"
+    echo "Modem ID     : $modem_id"
+    echo "Usage :
+  -r  :  Read all SMS messages.
+  -s  :  Send a SMS message. Use format: -s [phonenumber] [message]
+         Example: mmsms -s 08123456789 Hello, how are you?
+  -d  :  Delete all SMS messages. Use -d [number] to delete a spesific SMS with id number.
+         Example 1: mmsms -d (delete all SMS messages)
+         Example 2: mmsms -d 32 (delete a SMS message with id number 32)"
+}
+
+case "${1}" in
+    -r)
+        read_sms
+        ;;
+    -d)
+        shift
+        delete_sms "${1}"
+        ;;
+    -s)
+        shift
+        send_sms "${@}"
+      ;;
+    *)
+      usage
+      ;;
+esac

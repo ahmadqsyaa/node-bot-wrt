@@ -16,7 +16,6 @@
 * `axios`
 * `dotenv`
 * `node-telegram-bot-api`
-* `axios`
 *  `ws`
 
 ### QUICK INSTALLATION

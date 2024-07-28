@@ -80,4 +80,9 @@ pm2 restart bot --cron "*/30 * * * *"
 ### HELP & CONTACT
 * [**telegram**](https://t.me/rickk1kch)
 
+<p align="center">tested openwrt 23.05.4 reyre</p>
+
+
+
+
 

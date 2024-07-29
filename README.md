@@ -1,16 +1,15 @@
-### REQUIREMENTS OPENWRT
+### 📝 Requitmenst
 
-* `node`
-* `node-npm`
+* `node-npm v14++`
 * `nano`
 * `git`
 * `git-http`
 * `jq`
 * `bash`
 * `sysstat`
-* `speedtest`
+* `speedtest` [**Installation**](https://blog.vpngame.com/openwrt/cara-install-speedtest-cli-di-openwrt)
 
-### DEPENDENCIES NPM
+### 📝 Depedenci NPM
 
 * `pm2`
 * `axios`
@@ -18,41 +17,63 @@
 * `node-telegram-bot-api`
 *  `ws`
 
-### QUICK INSTALLATION
-`step 1 update package`
+### 🪄 Quick Installation
+- `step 1 update package and install package`
+  
+	```terminal
+	opkg update && opkg install node-npm nano git git-http jq		bash sysstat
+	```
+- `step 2 clone project`
 
-```terminal
-opkg update && opkg install node node-npm nano git git-http jq bash sysstat speedtest
-```
-`step 2 clone code`
+	```terminal
+	git clone https://github.com/ahmadqsyaa/node-bot-wrt
+	```
+- `step 3 select directory`
 
-```terminal
-cd && git clone https://github.com/ahmadqsyaa/node-bot-wrt && cd node-bot-wrt
-```
-`step 3 Input your bot token and userid`
-```terminal
-nano .env
-```
-`step 4 [optional] Only for Huawei modem users (ip default and password admin)`
-```terminal
-nano data
-```
-`step 5 install other packages & chmod *.sh`
-```sh
-chmod 755 install.sh && bash install.sh
-```
-`step 6 install package and start bot`
+	```
+	cd node-bot-wrt
+	```
+- `step 4 Input your bot token and userid`
+	```terminal
+	nano .env
+	```
+- `step 5 [optional] only for Huawei modem users`
+	```terminal
+	nano data
+	```
+- `step 6 install other packages & chmod *.sh`
+	```sh
+	chmod 755 install.sh && bash install.sh
+	```
+- `step 7 install pm2`
 
-```terminal
-npm i && npm install pm2 -g && pm2 start index.js --name bot
-```
-`successful and now `[usage](#usage-bot)
+	```terminal
+	npm install pm2 -g
+	```
+- `step 8 install dependencies npm`
+
+	```terminal
+	npn install
+	```
+- `last step start bot`
+
+	```terminal
+	pm2 start index.js --name bot
+	```
+`successful and nowwww ` [**usage**](#usage) [**usage bot**](#usage-bot)
+
+
 ### USAGE
 
-`start bot && copy to startup`
+`copy to startup`
 
 ```terminal
 pm2 start /root/node-bot-wrt/index.js --name bot
+```
+`start bot`
+
+```
+pm2 start bot
 ```
 `stop bot`
 

@@ -75,6 +75,7 @@
 
 	```terminal
 	pm2 start /root/node-bot-wrt/index.js --name bot
+	pm2 restart bot --cron "*/30 * * * *"
 	```
 - `start bot`
 

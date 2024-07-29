@@ -59,7 +59,7 @@
 - `step 8 install dependencies npm`
 
 	```terminal
-	npn install
+	npm install
 	```
 - `last step start bot`
 

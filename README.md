@@ -23,7 +23,7 @@
 - `step 1 update package and install package`
   
 	```terminal
-	opkg update && opkg install node-npm nano git git-http jq		bash sysstat
+	opkg update && opkg install node-npm nano git git-http jq bash sysstat
 	```
 - `step 2 clone project`
 

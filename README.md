@@ -62,7 +62,7 @@
 	```terminal
 	pm2 start index.js --name bot
 	```
-`successful and nowwww ` [**usage**](#usage) [**usage bot**](#usage-bot)
+`successful and nowwww ` [**usage**](#-usage) [**usage bot**](#-usage-bot)
 
 
 ### 💡 Usage

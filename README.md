@@ -35,11 +35,15 @@
 	```
 	cd node-bot-wrt
 	```
-- `step 4 Input your bot token and userid`
+- `step 4 edit your bot token and userid`
+ 	* `save file ctrl + s` `exit ctrl + x`
+    
 	```terminal
 	nano .env
 	```
-- `step 5 [optional] only for Huawei modem users`
+- `step 5 [optional] edit ip and pass, only for Huawei modem users`
+ 	* `save file ctrl + s` `exit ctrl + x`
+    
 	```terminal
 	nano data
 	```

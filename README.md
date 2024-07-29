@@ -1,3 +1,6 @@
+`click 👇`
+[![video](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_yHZOwYQuASrlFTLGuMndxwF971hwUSeTNA&usqp=CAU)](https://cdn.videy.co/Iz3ePEd7.mp4)
+
 ### 📝 Requitmenst
 
 * `node-npm v14++`
@@ -63,42 +66,43 @@
 `successful and nowwww ` [**usage**](#usage) [**usage bot**](#usage-bot)
 
 
-### USAGE
+### 💡 Usage
 
-`copy to startup`
+- `copy to startup`
 
-```terminal
-pm2 start /root/node-bot-wrt/index.js --name bot
-```
-`start bot`
+	```terminal
+	pm2 start /root/node-bot-wrt/index.js --name bot
+	```
+- `start bot`
 
-```
-pm2 start bot
-```
-`stop bot`
+	```
+	pm2 start bot
+	```
+- `stop bot`
 
-```terminal
-pm2 stop bot
-```
-`restart bot`
+	```terminal
+	pm2 stop bot
+	```
+- `restart bot`
 
-```terminal
-pm2 restart bot
-```
-`auto restart bot 30 minutes`
+	```terminal
+	pm2 restart bot
+	```
+- `auto restart bot 30 minutes`
 
-```terminal
-pm2 restart bot --cron "*/30 * * * *" 
-```
+	```terminal
+	pm2 restart bot --cron "*/30 * * * *" 
+	```
 
-### USAGE BOT
+### 💡 Usage Bot
 
-`step 1 open telegram and chat bot and type`
-```bot command
-/start
-```
-
-### HELP & CONTACT
+- `step 1 open telegram and chat bot and type`
+  
+	```bot command
+	/start
+	```
+[![Alt Text](https://i.ibb.co/6vCfmpK/Screenshot-20240729-112953.png)](#)
+### 🆘 Help & Contact 
 * [**telegram**](https://t.me/rickk1kch)
 
 <p align="center">tested openwrt 23.05.4 reyre</p>

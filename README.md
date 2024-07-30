@@ -28,7 +28,7 @@
 - `step 2 clone project`
 
 	```terminal
-	git clone https://github.com/ahmadqsyaa/node-bot-wrt
+	cd && git clone https://github.com/ahmadqsyaa/node-bot-wrt
 	```
 - `step 3 select directory`
 

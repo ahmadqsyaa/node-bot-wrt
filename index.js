@@ -129,6 +129,7 @@ async function getip() {
     var isp = data.isp;
 
     result = `
+ <blockquote>
 ╭───────────────────────────╮
 ├ ip: ${ip}
 ├ country: ${country}
@@ -139,6 +140,7 @@ async function getip() {
 ├ timezone: ${timezone}
 ├ isp: ${isp}
 ╰───────────────────────────╯
+</blockquote>
 `;
 
     return result;
@@ -303,12 +305,14 @@ start case
         var res = JSON.parse(data)
         result = 
 `
+<blockquote>
 ╭───────────────────────────╮
 ├ free ram: ${formats(res.ram_tersedia)}
 ├ before: ${formats(res.sebelum)}
 ├ after: ${formats(res.sesudah)}
 ├ remove: ${formats(res.cache_yang_dihapus)}
 ╰───────────────────────────╯
+</blockquote>
 `
         bot.editMessageText(result, ops);
     break;
@@ -631,6 +635,10 @@ start case
             callback_data: 'off-com'
           },
           {
+            text: 'update',
+            callback_data: 'up-com'
+          },
+          {
             text: 'cancel',
             callback_data: 'cancel'
           }
@@ -667,6 +675,7 @@ start case
         var p = JSON.parse(data)
 result = 
 `
+<blockquote>
 ╭───────────────────────────╮
 ├ modem: ${p.modem}
 ├ operator: ${p.operator_name}
@@ -683,8 +692,9 @@ result =
 ├ rssi: ${p.rssi}
 ├ sinr: ${p.sinr}
 ╰───────────────────────────╯
+</blockquote>
 `
-        bot.editMessageText(`<code>${result}</code>`, {
+        bot.editMessageText(result, {
             chat_id: chatId,
             message_id: msgId+1,
             "parse_mode":"html",
@@ -938,7 +948,7 @@ result =
     case 'myip':
         bot.sendMessage(chatId,"loading",{"reply_to_message_id":`${msgId}`});
         var data = await getip()
-        await bot.editMessageText(data, ops);
+        await bot.editMessageText(data, opp);
     break
     case 'base64':
        var text = words.slice(1).join(' ');
@@ -970,26 +980,17 @@ result =
                     var versionn = response.data.version;
                     if (versiono !== versionn){
                         console.log(`[SYSTEM UPDATE] ada update dari ${versiono} ke ${versionn}`)
-                        await bot.editMessageText(`updates available v${versiono} > v${versionn} \r\n\r\nwhat are the updates?\n<pre>${response.data.desc}</pre>`,{
+                        await bot.editMessageText(response.data.desc,{
                             chat_id: chatId,
                             message_id: msgId+1,
                             parse_mode:"html",
                             reply_markup: {
                                 inline_keyboard: [
-                                    [
-                                      {
-                                        text: 'update',
-                                        callback_data: 'updates'
-                                      },
-                                      {
-                                        text: 'cancel',
-                                        callback_data: 'cancel'
-                                      }
-                                    ]
+                                    response.data.callback
                             ]}                            
                         })
                     } else {
-                        bot.editMessageText(`updates not available\r\n\r\n<pre>${response.data.message}</pre>`, {
+                        bot.editMessageText(`<pre>${response.data.message}</pre>`, {
                             chat_id: chatId,
                             message_id: msgId+1,
                             parse_mode:"html"
@@ -1047,6 +1048,11 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
   if (action == "off-com"){
     bot.editMessageText("command is inactive, please exit the chat and wait a few seconds.", opts);
     await bot.deleteMyCommands();
+  } else
+  if (action == "up-com"){
+    await bot.deleteMyCommands();
+    bot.editMessageText("command update successfully, please exit the chat and wait a few seconds.", opts); 
+    await bot.setMyCommands(commands)
   } else
   if (action == "1"){
     bot.editMessageText("loading", opts);
@@ -1107,6 +1113,11 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
         ]
       ]},
   } );
+  } else 
+  if (action == "hem"){
+    await bot.editMessageText("loading", opts);
+    var data = await exec("ht-api -d");
+    bot.editMessageText(`success ${data}`, opts);
   } else 
   if (action == "restart-ps"){
     bot.editMessageText("loading", opts);
@@ -1275,7 +1286,7 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
         await exec('rm -rf *.png')
   }
   if (action == "stat-l"){
-      bot.editMessageText("other vnstati menus, please select below",{
+      bot.editMessageText("other vnstati menu, please select below",{
     chat_id: cbk.chat.id,
     message_id: cbk.message_id,
     reply_markup: {
@@ -1433,7 +1444,7 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
   if (action == "yak"){
     bot.editMessageText("loading", opts);
     var data = await exec("mmsms -d");
-    bot.editMessageText(data, opts);
+    bot.editMessageText(`success ${data}`, opts);
   } if (action == "updates"){
     await bot.editMessageText("downloading..", opts);
     await update()
@@ -1469,7 +1480,9 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
     if (!dor) return edit(`total errors when running ${m}`)
     var data = JSON.parse(dor)
 result = 
+
 `
+<blockquote>
 ╭───────────────────────────╮
 ├ conn_time = ${data.conn_time}
 ├ conn_time_sec = ${data.conn_time_sec}
@@ -1521,8 +1534,9 @@ result =
 ├ rssi = ${data.rssi}
 ├ sinr = ${data.sinr}
 ╰───────────────────────────╯
+</blockquote>
 `
-await bot.editMessageText(`<code>${result}</code>`, {
+await bot.editMessageText(result, {
     chat_id: cbk.chat.id,
     message_id: cbk.message_id,
     "parse_mode":"html"

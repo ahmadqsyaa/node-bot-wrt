@@ -74,8 +74,12 @@
 - `copy to startup`
 
 	```terminal
-	pm2 start /root/node-bot-wrt/index.js --name bot
-	pm2 restart bot --cron "*/30 * * * *"
+	cd /root/node-bot-wrt && pm2 start index.js --name bot
+	```
+ - `copy to schedule task`
+
+	```terminal
+	*/15 * * * * pm2 restart bot
 	```
 - `start bot`
 

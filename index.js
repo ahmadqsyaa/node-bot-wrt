@@ -25,9 +25,9 @@ const Telegram = require('node-telegram-bot-api');
 const exec = require('./lib/exec');
 const getimg = require('./lib/getimg');
 const getword = require('./lib/getword');
-const adb = require('./lib/adb');
+const { adb, modpes } = require('./lib/adb');
 const update = require('./lib/update');
-const { openClashRules, openClashProxies, getTrafic } = require('./lib/openclash')
+const {  zeus, proxy1, proxy2, proxy3 , rules, getTrafic } = require('./lib/openclash')
 const bot = new Telegram(process.env.TOKEN, {polling: true});
 const axios = require('axios').default;
 const fs  = require('fs')
@@ -88,8 +88,12 @@ const opskey = {
   })
 };
 
-/*
-*/
+//speedtest
+function formas(bytes) {
+    const mbps = bytes / 125000;
+    return mbps.toFixed(2) + ' mbps';
+}
+
 function formats(bytes) {
     if (bytes < 1024) {
         return bytes + ' KB';
@@ -213,7 +217,8 @@ bot.on('message',async (msg)=> {
   const opp = {
     chat_id: chatId,
     message_id: msgId+1,
-    "parse_mode":"html"
+    "parse_mode":"html",
+    disable_web_page_preview: true
   };
   var reply = (text) => {
       bot.sendMessage(chatId, `${text}`,{"reply_to_message_id":`${msgId}`})
@@ -291,13 +296,40 @@ start case
   });
     break;
     case 'speedtest':
-        bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
-        var startspeed = await exec(`speedtest | grep "Result URL" | cut -d ':' -f2-`)
-        if (!startspeed) {
-            return edit('speedtest error')
+        await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
+        try {
+    var stdout = await exec("speedtest --format json");
+    var data = JSON.parse(stdout);
+    const waktu = new Date(data.timestamp).toLocaleString('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour12: false
+    });
+     if (data.type === "result") {
+            var result = `
+<b>
+timestamp: ${waktu}
+ping: ${data.ping.latency+' ms'}
+download: ${formas(data.download.bandwidth)}
+upload: ${formas(data.upload.bandwidth)}
+isp: ${data.isp}
+ip: ${data.interface.externalIp}
+server: ${data.server.host}
+nameserver: ${data.server.name}
+location: ${data.server.location}
+result url: ${data.result.url}
+</b>
+`;
+            console.log(result);
+            await bot.editMessageText("success", opp);
+            await await bot.sendPhoto(chatId, data.result.url,{"caption":result,"parse_mode":"html",}); 
         } else {
-        bot.editMessageText(startspeed, ops);
+            console.log("Data tidak valid");
+            await bot.editMessageText(`<blockquote>${data+'\nPlease try again'}</blockquote>`, opp);
         }
+    } catch (error) {
+        console.log(error);
+        await bot.editMessageText(`<blockquote>${error+'\nPlease try again'}</blockquote>`, opp);
+    }  
     break;
     case 'clear':
         bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
@@ -350,17 +382,25 @@ start case
     
     break
     case 'ocproxy':
-        bot.sendMessage(chatId, 'choose one of the proxy versions that works, v1 yacd v2.13 || v2 yacd v3.7 if the second is still an error try updating yacd to v3.7.',{reply_markup: {
+        bot.sendMessage(chatId, 'choose one of the proxy versions that works, recommend using v0.3.7',{reply_markup: {
         inline_keyboard: [
         [
           {
-            text: 'proxy v1',
+            text: 'yacd v0.3.7',
             callback_data: 'p-v1'
           },
           {
-            text: 'proxy v2',
+            text: 'yacd v0.3.7',
             callback_data: 'p-v2'
-          }
+          },
+          {
+            text: 'yacd v0.2.13',
+            callback_data: 'p-v3'
+          },
+          {
+            text: 'zeus ⚡',
+            callback_data: 'zeus'
+          } 
         ]
       ]},"reply_to_message_id":`${msgId}`
   });
@@ -457,6 +497,11 @@ start case
       ]},"reply_to_message_id":`${msgId}`
   });
     break;
+    case 'modpes':
+       await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
+       await bot.editMessageText(data, ops);
+       await modpes() 
+    break
     case 'wget':
     case 'curl':
     case 'git':
@@ -890,7 +935,7 @@ result =
         bot.sendMessage(chatId,"loading",{"reply_to_message_id":`${msgId}`});
         var data = await exec('bash ./lib/info.sh');
         if (!data) return edit(`total errors when running ${m}`)
-        bot.editMessageText(data, ops);
+        bot.editMessageText(data, opp);
     break;
     case 'ifconfig':
         var faces = words.slice(1).join(' ');
@@ -990,7 +1035,7 @@ result =
                             ]}                            
                         })
                     } else {
-                        bot.editMessageText(`<pre>${response.data.message}</pre>`, {
+                        bot.editMessageText(response.data.message, {
                             chat_id: chatId,
                             message_id: msgId+1,
                             parse_mode:"html"
@@ -1331,7 +1376,7 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
   } else 
   if (action == "p-v1"){
     try {
-    var data = await openClashProxies('1')
+    var data = await proxy1()
     bot.editMessageText(data, opts);
     } catch (e){
         bot.editMessageText(data, opts);
@@ -1339,7 +1384,24 @@ bot.on('callback_query',async function onCallbackQuery(callbackQuery) {
   } else
   if (action == "p-v2"){
     try {
-    var data = await openClashProxies('2')
+    var data = await proxy2()
+    bot.editMessageText(data, opts);
+    } catch (e){
+        bot.editMessageText(data, opts);
+    }
+  } else
+  if (action == "p-v3"){
+    try {
+    var data = await proxy3()
+    bot.editMessageText(data, opts);
+    } catch (e){
+        bot.editMessageText(data, opts);
+    }
+  
+  } else 
+  if (action == "zeus"){
+    try {
+    var data = await zeus()
     bot.editMessageText(data, opts);
     } catch (e){
         bot.editMessageText(data, opts);

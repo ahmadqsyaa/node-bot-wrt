@@ -316,7 +316,7 @@ ip: ${data.interface.externalIp}
 server: ${data.server.host}
 nameserver: ${data.server.name}
 location: ${data.server.location}
-result url: ${data.result.url}
+result url: <a href="${data.result.url}">link</a>
 </b>
 `;
             console.log(result);

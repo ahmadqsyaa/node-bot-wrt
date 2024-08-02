@@ -346,7 +346,7 @@ result url: <a href="${data.result.url}">link</a>
 ╰───────────────────────────╯
 </blockquote>
 `
-        bot.editMessageText(result, ops);
+        bot.editMessageText(result, opp);
     break;
     case 'firewall':
         bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});

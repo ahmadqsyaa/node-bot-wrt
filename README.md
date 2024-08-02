@@ -47,7 +47,7 @@
 	```terminal
 	nano data
 	```
-- `step 6 install other packages & chmod *.sh`
+- `step 6 install other packages & permision 
 	```sh
 	chmod 755 install.sh && bash install.sh
 	```

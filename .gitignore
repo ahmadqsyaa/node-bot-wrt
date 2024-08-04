@@ -1,6 +1,4 @@
 .env
-data
-
 # Logs
 logs
 *.log

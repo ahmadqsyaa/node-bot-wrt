@@ -2,10 +2,11 @@
 
 #do not modify this file if you do not understand it
 #create https://github.com/ahmadqsyaa
-#huawei tools script for https://github.com/ahmadqsyaa/Mod-PHPTeleBotWrt
 
-ipmodem=$(sed -n '1p' /root/node-bot-wrt/data)
-pass=$(sed -n '2p' /root/node-bot-wrt/data)
+source /root/node-bot-wrt/.env
+
+ipmodem=$IPMODEM
+pass=$PASSWORD
 
 login() {
   data=$(curl -s http://$ipmodem/api/webserver/SesTokInfo -H "Host: $ipmodem" -H "Connection: keep-alive" -H "Accept: */*" -H "X-Requested-With: XMLHttpRequest" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Referer: http://$ipmodem/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7")
@@ -28,8 +29,9 @@ login() {
     login=$(curl -s -D- -o/dev/null -X POST http://$ipmodem/api/user/login -H "Host: $ipmodem" -H "Connection: keep-alive" -H "Accept: */*" -H "Origin: http://$ipmodem" -H "X-Requested-With: XMLHttpRequest" -H "__RequestVerificationToken: $token" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "Referer: http://$ipmodem/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" -d '<?xml version="1.0" encoding="UTF-8"?><request><Username>admin</Username><Password>'$pass1'</request>')
     scoki=$(echo "$login" | grep [Ss]et-[Cc]ookie | cut -d':' -f2 | cut -b 1-138)
     if [ ! -n "$scoki" ]; then
-      echo -e "Login failed"
-      
+       scoki=$(echo "$login" | grep '__RequestVerificationToken:' | cut -d ':' -f 2 | tr -d ' ') 
+    elif [ ! -n "$scoki" ]; then
+       echo "login failed"
     fi
   fi
 }

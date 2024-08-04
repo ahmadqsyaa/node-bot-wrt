@@ -298,7 +298,7 @@ start case
     case 'speedtest':
         await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
         try {
-    var stdout = await exec("speedtest --format json");
+    var stdout = await exec("speedtest --accept-license --f json");
     var data = JSON.parse(stdout);
     const waktu = new Date(data.timestamp).toLocaleString('id-ID', {
         timeZone: 'Asia/Jakarta',

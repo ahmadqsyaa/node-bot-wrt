@@ -500,7 +500,7 @@ result url: <a href="${data.result.url}">link</a>
     case 'modpes':
        await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
        await bot.editMessageText("success", ops);
-       await exec("bash /lib/modpes.sh")
+       await exec("bash ./lib/modpes.sh")
     break
     case 'wget':
     case 'curl':

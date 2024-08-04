@@ -35,17 +35,16 @@
 	```
 	cd node-bot-wrt
 	```
-- `step 4 edit your bot token and userid`
- 	* `save file ctrl + s` `exit ctrl + x`
+- `step 4 rename file .env.example to .env`
     
 	```terminal
-	nano .env
+	mv .env.example .env
 	```
-- `step 5 [optional] edit ip and pass, only for Huawei modem users`
- 	* `save file ctrl + s` `exit ctrl + x`
-    
+- `step 5 edit your bot token and userid. require!!!`
+    		- `It is recommended to use a file manager, then edit the .env file in the /root/node-bot-wrt/.env`
+ 	- `if use nano` `save file ctrl + s` `exit ctrl + x`
 	```terminal
-	nano data
+	nano .env 
 	```
 - `step 6 install other packages & permision 
 	```sh

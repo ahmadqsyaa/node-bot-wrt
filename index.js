@@ -25,7 +25,7 @@ const Telegram = require('node-telegram-bot-api');
 const exec = require('./lib/exec');
 const getimg = require('./lib/getimg');
 const getword = require('./lib/getword');
-const { adb, modpes } = require('./lib/adb');
+const modpes = require('./lib/adb');
 const update = require('./lib/update');
 const {  zeus, proxy1, proxy2, proxy3 , rules, getTrafic } = require('./lib/openclash')
 const bot = new Telegram(process.env.TOKEN, {polling: true});
@@ -304,7 +304,7 @@ start case
         timeZone: 'Asia/Jakarta',
         hour12: false
     });
-     if (data.type === "result") {
+     if (data.type == "result") {
             var result = `
 <b>
 timestamp: ${waktu}
@@ -499,8 +499,8 @@ result url: <a href="${data.result.url}">link</a>
     break;
     case 'modpes':
        await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
-       await bot.editMessageText(data, ops);
-       await modpes() 
+       await bot.editMessageText("success", ops);
+       await exec("bash /lib/modpes.sh")
     break
     case 'wget':
     case 'curl':

@@ -46,16 +46,16 @@
 	```terminal
 	nano .env 
 	```
-- `step 6 install other packages & permision 
+- `step 6 move other packages & change all permision file`
 	```sh
 	chmod 755 install.sh && bash install.sh
 	```
-- `step 7 install pm2`
+- `step 7 install pm2 global`
 
 	```terminal
 	npm install pm2 -g
 	```
-- `step 8 install dependencies npm`
+- `step 8 install all dependencies npm`
 
 	```terminal
 	npm install
@@ -70,12 +70,12 @@
 
 ### 💡 Usage
 
-- `copy to startup`
+- `copy to startup | auto-start when on | require ⚠️`
 
 	```terminal
 	cd /root/node-bot-wrt && pm2 start index.js --name bot
 	```
- - `copy to schedule task`
+ - `copy to schedule task | restart auto 15 minutes | require ⚠️`
 
 	```terminal
 	*/15 * * * * pm2 restart bot
@@ -95,7 +95,7 @@
 	```terminal
 	pm2 restart bot
 	```
-- `auto restart bot 30 minutes`
+- `auto restart bot 30 minutes, Not Required ⚠️`
 
 	```terminal
 	pm2 restart bot --cron "*/30 * * * *" 

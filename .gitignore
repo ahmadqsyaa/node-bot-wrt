@@ -1,4 +1,5 @@
 .env
+/lib/trafic.txt
 # Logs
 logs
 *.log

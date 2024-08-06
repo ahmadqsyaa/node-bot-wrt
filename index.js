@@ -299,7 +299,8 @@ start case
         await bot.sendMessage(chatId, "loading",{"reply_to_message_id":`${msgId}`});
         try {
     var stdout = await exec("speedtest --accept-license --f json");
-    var data = JSON.parse(stdout);
+    const json = stdout.match(/\{[\s\S]*\}/)[0];
+    var data = JSON.parse(json);
     const waktu = new Date(data.timestamp).toLocaleString('id-ID', {
         timeZone: 'Asia/Jakarta',
         hour12: false
@@ -322,9 +323,11 @@ result url: <a href="${data.result.url}">link</a>
             console.log(result);
             await bot.editMessageText("success", opp);
             await await bot.sendPhoto(chatId, data.result.url,{"caption":result,"parse_mode":"html",}); 
-        } else {
+        } else if (data.type == "log"){
             console.log("Data tidak valid");
-            await bot.editMessageText(`<blockquote>${data+'\nPlease try again'}</blockquote>`, opp);
+            await bot.editMessageText(`<blockquote>${data.message+'\nPlease try again'}</blockquote>`, opp);
+        } else {
+            await bot.editMessageText(data)
         }
     } catch (error) {
         console.log(error);
@@ -716,8 +719,9 @@ result url: <a href="${data.result.url}">link</a>
         if (!cekin) return reply("luci-app-3ginfo-lite package not installed")
         bot.sendMessage(chatId,"loading",{"reply_to_message_id":`${msgId}`});
         var data = await exec('bash /usr/share/3ginfo-lite/3ginfo.sh');
+        var json = data.match(/\{[\s\S]*\}/)[0];
         if (!data) return edit(`total errors when running ${m}`)
-        var p = JSON.parse(data)
+        var p = JSON.parse(json)
 result = 
 `
 <blockquote>

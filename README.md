@@ -67,7 +67,10 @@
 	```
 `successful and nowwww ` [**usage**](#-usage) [**usage bot**](#-usage-bot)
 
-
+- `uninstall bot`
+    ```
+    opkg update && (cd /tmp && curl -sLko uninstall https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/uninstall.sh && bash uninstall)
+    ```
 ### 💡 Usage
 
 - `copy to startup | auto-start when on | require ⚠️`

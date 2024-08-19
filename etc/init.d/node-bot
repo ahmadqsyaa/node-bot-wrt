@@ -1,0 +1,33 @@
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2011-2015 OpenWrt.org
+
+START=99
+
+start() {
+	pgrep -f /root/node-bot-wrt/index.js > /dev/null
+    if [ $? -eq 0 ]; then
+        echo -e "bot already running, stop bot..." 
+		kill $(pgrep -f /root/node-bot-wrt/index.js) >/dev/null 2>&1
+	fi
+	cd /root/node-bot-wrt && node /root/node-bot-wrt/index.js >/dev/null 2>&1 &
+	echo -e "starting bot..."
+	return 0
+}
+
+stop() {
+	echo -e "stoping bot.."
+	kill $(pgrep -f /root/node-bot-wrt/index.js) >/dev/null 2>&1
+}
+
+restart(){
+	stop
+	sleep 1
+	start
+}
+
+boot() {
+	sleep 10
+	/root/node-bot-wrt/lib/bot/booting.sh >/dev/null
+	(start >/dev/null 2>&1) &
+	return 0
+}

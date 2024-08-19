@@ -1,0 +1,1 @@
+cd /root/node-bot-wrt && node /root/node-bot-wrt/index.js

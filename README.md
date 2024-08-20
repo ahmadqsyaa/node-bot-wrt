@@ -19,101 +19,24 @@
 * `node-telegram-bot-api`
 *  `ws`
 
-### 🪄 Quick Installation
-- `step 1 update package and install package`
-  
-	```terminal
-	opkg update && opkg install node-npm nano git git-http jq bash sysstat
-	```
-- `step 2 clone project`
+### 🪄 fast Installation
+- copy and oaste in terminal
+```
+wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot && chmod +x /usr/bin/node-bot
+```
 
-	```terminal
-	cd && git clone https://github.com/ahmadqsyaa/node-bot-wrt
-	```
-- `step 3 select directory`
+-install bot
+```
+node-bot -i
+```
 
-	```
-	cd node-bot-wrt
-	```
-- `step 4 rename file .env.example to .env`
-    
-	```terminal
-	mv .env.example .env
-	```
-- `step 5 edit your bot token and userid. require!!!`
-    		- `It is recommended to use a file manager, then edit the .env file in the /root/node-bot-wrt/.env`
- 	- `if use nano` `save file ctrl + s` `exit ctrl + x`
-	```terminal
-	nano .env 
-	```
-- `step 6 move other packages & change all permision file`
-	```sh
-	chmod 755 install.sh && bash install.sh
-	```
-- `step 7 install pm2 global`
+- help usage
+```
+node-bot -h
+```
 
-	```terminal
-	npm install pm2 -g
-	```
-- `step 8 install all dependencies npm`
-
-	```terminal
-	npm install
-	```
-- `last step start bot`
-
-	```terminal
-	pm2 start index.js --name bot
-	```
-`successful and nowwww ` [**usage**](#-usage) [**usage bot**](#-usage-bot)
-
-- `uninstall bot ⚠️⚠️`
-
-    ```terminal
-    opkg update && (cd /tmp && curl -sLko uninstall https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/uninstall.sh && bash uninstall)
-    ```
-### 💡 Usage
-
-- `copy to startup | auto-start when on | require ⚠️`
-
-	```terminal
-	cd /root/node-bot-wrt && pm2 start index.js --name bot
-	```
- - `copy to schedule task | restart auto 15 minutes | require ⚠️`
-
-	```terminal
-	*/15 * * * * pm2 restart bot
-	```
-- `start bot`
-
-	```
-	pm2 start bot
-	```
-- `stop bot`
-
-	```terminal
-	pm2 stop bot
-	```
-- `restart bot`
-
-	```terminal
-	pm2 restart bot
-	```
-- `auto restart bot 30 minutes, Not Required ⚠️`
-
-	```terminal
-	pm2 restart bot --cron "*/30 * * * *" 
-	```
-
-### 💡 Usage Bot
-
-- `step 1 open telegram and chat bot and type`
-  
-	```bot command
-	/start
-	```
-[![Alt Text](https://i.ibb.co/6vCfmpK/Screenshot-20240729-112953.png)](#)
-
+- group telegram
+[**group**](https://t.me/infobot_wrt)
 
 #### ⚒️ Command Bot
 

@@ -20,17 +20,20 @@
 *  `ws`
 
 ### 🪄 fast Installation
-- copy and oaste in terminal
+`copy and paste in terminal`
+
 ```
 wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot && chmod +x /usr/bin/node-bot
 ```
 
--install bot
+`installing bot`
+
 ```
 node-bot -i
 ```
 
-- help usage
+`help usage`
+
 ```
 node-bot -h
 ```

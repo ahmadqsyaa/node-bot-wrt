@@ -1,5 +1,9 @@
 import execute from '../lib/execute.js'
 export const speedtest = async (bot, msg, chatId, messageId, text) => {
+    function formas(bytes) {
+        const mbps = bytes / 125000;
+        return mbps.toFixed(2) + ' mbps';
+    }
     await bot.sendMessage(chatId, "loading", {
                     "reply_to_message_id": messageId
                 });

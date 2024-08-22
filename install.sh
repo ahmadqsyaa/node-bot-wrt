@@ -66,6 +66,19 @@ createConfig(){
     sed -i "3s/.*/IPMODEM='$(printf "%s" "$3")'/" /root/node-bot-wrt/.env
     sed -i "4s/.*/PASSWORD='$(printf "%s" "$4")'/" /root/node-bot-wrt/.env
 }
+uninstall(){
+while :; do
+            read -e -p "do you want to uinstall node-bot-wrt ? [y/n]: " q
+            if [ "${q}" == 'y' ]; then
+                echo -e "uninstalling node-bot-wrt ..."
+                rm -r /root/node-bot-wrt
+                rm -rf /usr/bin/ht-api /usr/bin/mmsms /etc/init.d/node-bot
+                break
+            else
+                echo -e "input error! Please only input 'y' or 'n'"
+            fi
+        done
+}
 install(){
     if [ -d "/root/node-bot-wrt" ]; then
         echo -e "node-bot-wrt already installed"

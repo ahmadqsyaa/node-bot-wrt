@@ -35,21 +35,21 @@ installpckg(){
         echo -e "Installing ${1}..." && opkg install $1
     fi
 }
-addCrontab(){
+addCrontab() {
     if [ "$1" == "botcb" ]; then
         if crontab -l | grep -q 'cek-bot.sh'; then
-            echo -e "crontab bot already exists"
+            echo "crontab bot already exists"
             return 0
         fi
-    elif 
-   	echo -e "add bot to crontab ..."
+    else
+        echo "add bot to crontab ..."
     fi
 
     tmpfile=$(mktemp)
-	crontab -l >"$tmpfile"
+    crontab -l >"$tmpfile"
     printf '%s\n' "$2" >>"$tmpfile"
     crontab "$tmpfile" && rm -f "$tmpfile"
-    echo -e "Successfully add crontab"
+    echo "Successfully add crontab"
 }
 removeCrontab(){
     tmpfile=$(mktemp)

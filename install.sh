@@ -7,6 +7,7 @@ help(){
     echo -e ''
     echo -e 'help, -h      show help usage' 
     echo -e 'install, -i       install bot'
+    echo -e 'uninstall, -rf   uninstall bot'
     echo -e 'update, -u         update bot'
     echo -e 'version, -v       version bot'
     echo -e 'status, -s     cek status bot'
@@ -40,6 +41,8 @@ addCrontab(){
             echo -e "crontab bot already exists"
             return 0
         fi
+    elif 
+   	echo -e "add bot to crontab ..."
     fi
 
     tmpfile=$(mktemp)
@@ -97,9 +100,9 @@ install(){
             break
         fi
     done
-    read -p "$(echo -e "(opsional), for modem huawei please input ip address : ")" IPMODEM
-    read -p "$(echo -e "(opsional), for modem huawei please input password : ")" PASSWORD
-    echo -e "install package ..."
+    read -p "(opsional), for modem huawei please input ip address : " IPMODEM
+    read -p "(opsional), for modem huawei please input password : " PASSWORD
+    echo -e "update package & install package ..."
     sleep 1
     opkg update
     installpckg "node-npm"
@@ -117,9 +120,9 @@ install(){
     cd
     git clone https://github.com/ahmadqsyaa/node-bot-wrt.git
     cd node-bot-wrt
-    echo -e "installing dependencies NPM..."
+    echo -e "installing dependencies NPM ..."
     sleep 1
-    npm install
+    npm install && echo "npm install successful." || { echo "npm install failed."; exit 1; } 
     cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
     cp /root/node-bot-wrt/.env.example /root/node-bot-wrt/.env
     cp /root/node-bot-wrt/lib/mmsms /usr/bin/
@@ -131,13 +134,17 @@ install(){
     echo -e "test send message ..."
     sleep 1
     /root/node-bot-wrt/lib/bot/booting.sh
+    sleep 1
+    echo -e "enable service ..."
     /etc/init.d/node-bot enable
     sleep 1
+    echo -e "start service ..."
     /etc/init.d/node-bot start
-    echo -e "add bot crontab ..."
+    sleep 1
     addCrontab "botcb" "*/2 * * * *  /root/node-bot-wrt/lib/bot/cek-bot.sh"
     sleep 1
     echo -e "bot successfully installed ..."
+    echo -e "join groups telegram https://t.me/infobot_wrt"
 }
 update(){
     read -p "$(echo -e "do you want to continue the update? [y/n]: ")" q
@@ -173,6 +180,10 @@ case "${1}" in
 -i|install)
   clear
   install
+  ;;
+-rf|uninstall)
+  clear
+  uninstall
   ;;
 -u|update)
   clear

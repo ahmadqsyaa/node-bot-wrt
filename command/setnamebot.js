@@ -8,7 +8,7 @@ export const setnamebot = async (bot, msg, chatId, messageId, text) => {
                 });
                 return bot.sendMessage(chatId, 
                 `success change name bot to ${name}`,
-                {reply_to_message_id:response.chat.id})
+                {reply_to_message_id: messageId+1})
             } catch (e) {
                 return bot.sendMessage(chatId, e,{reply_to_message_id: response.chat.id})
             }

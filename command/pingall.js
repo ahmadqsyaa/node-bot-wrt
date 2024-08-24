@@ -1,4 +1,5 @@
 import { domains } from '../lib/command.js'
+import execute from '../lib/execute.js'
 export const pingall = async (bot, msg, chatId, messageId, text) => {
     bot.sendMessage(chatId, "loading", {
                     "reply_to_message_id": `${messageId}`

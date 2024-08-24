@@ -24,6 +24,7 @@ function start() {
         .on('exit', (code, signal) => {
             console.error(`Child process exited with code: ${code}, signal: ${signal}`);
             running = false
+            start()
         })
         .on('disconnect', () => {
             console.log('Child process disconnected');

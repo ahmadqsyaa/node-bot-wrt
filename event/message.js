@@ -619,11 +619,11 @@ export const messageEvent = async (bot, msg) => {
 		case 'cekbug':
 			const eth = text.split(' ')[1];
 			const bug = text.split(' ')[2];
-			if (!eth || !bug) return bot.sendMessage('/cekbug <interface> <bug.com/ip>', {
+			if (!eth) return bot.sendMessage(chatId, '/cekbug <interface> <bug.com/ip>', {
 				reply_to_message_id: messageId
 			});
 			bot.sendMessage(chatId, "loading", {
-				"reply_to_message_id": `${messageId}`
+				"reply_to_message_id": messageId
 			});
 			try {
 				const data = await execute(`timeout 10 ping -c 1 -I ${eth} ${bug}|awk "NR==2"|awk -F 'time=' '{print $2}'|awk -F. '{print $1}'`);

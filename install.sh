@@ -1,22 +1,26 @@
 #!/bin/bash
 
 help(){
-    echo -e '*****************************'
-    echo -e '*SIMPLE GUI BOT - NODE - WRT*'
-    echo -e '*****************************'
+    echo -e '***************************************'
+    echo -e '***** SIMPLE GUI BOT - NODE - WRT *****'
+    echo -e '***************************************'
     echo -e ''
-    echo -e 'help, -h      show help usage' 
-    echo -e 'install, -i       install bot'
-    echo -e 'uninstall, -rf   uninstall bot'
-    echo -e 'update, -u         update bot'
-    echo -e 'version, -v       version bot'
-    echo -e 'status, -s     cek status bot'
-    echo -e 'start               start bot'
-    echo -e 'stop                 stop bot'
-    echo -e 'restart           restart bot'
-    echo -e 'add_bot_cron, -cb    add cron'
-    echo -e 'rm_bot_cron, -rcb   dell cron'
-    echo -e '*****************************'
+    echo -e 'help, -h                show help usage' 
+    echo -e 'install, -i                 install bot'
+    echo -e 'uninstall, -rf            uninstall bot'
+    echo -e 'changecfg, -cc            change config'
+    echo -e 'backup, -bck              backup config'
+    echo -e 'restore, -rst            restore config'
+    echo -e 'update, -u                   update bot'
+    echo -e 'upnode, -un             update node-bot'
+    echo -e 'version, -v                 version bot'
+    echo -e 'status, -s               cek status bot'
+    echo -e 'start                         start bot'
+    echo -e 'stop                           stop bot'
+    echo -e 'restart                     restart bot'
+    echo -e 'add_bot_cron, -cb              add cron'
+    echo -e 'rm_bot_cron, -rcb             dell cron'
+    echo -e '***************************************'
 }
 status(){
     pgrep -f /root/node-bot-wrt/index.js > /dev/null
@@ -66,6 +70,49 @@ createConfig(){
     sed -i "3s/.*/IPMODEM='$(printf "%s" "$3")'/" /root/node-bot-wrt/.env
     sed -i "4s/.*/PASSWORD='$(printf "%s" "$4")'/" /root/node-bot-wrt/.env
 }
+backup(){
+    if [ -e "../.env" ]; then
+        rm -rf ../.env
+        cp /root/node-bot-wrt/.env /.env
+        echo -e "backup config successfully ../.env" 
+    else
+        cp /root/node-bot-wrt/.env /.env
+        echo -e "backup config successfully ../.env"
+    fi
+}
+restore(){
+    mv ../.env /root/node-bot-wrt/.env
+    echo -e "restore config successfully"
+}
+changecfg(){
+    while :; do
+            echo -e "1 (TOKEN) 2 (USERID) 3 (IPMODEM) 4 (PASSWORD) || 0 (exit mode)"
+            read -e -p "what do you want to change? eg: 1: " q
+            if [ "${q}" == '1' ]; then
+                read -e -q "enter new Token : " newtok
+                sed -i "1s/.*/TOKEN='$(printf "%s" "$newtok")'/" /root/node-bot-wrt/.env 
+                break
+            elif [ "${q}" == '2' ]; then
+                read -e -q "enter new Userid : " newusr
+                sed -i "2s/.*/USERID='$(printf "%s" "$newusr")'/" /root/node-bot-wrt/.env 
+                break
+            elif [ "${q}" == '3' ]; then
+                read -e -q "enter new ipmodem : " newip
+                sed -i "3s/.*/IPMODEM='$(printf "%s" "$newip")'/" /root/node-bot-wrt/.env 
+                break
+            elif [ "${q}" == '4' ]; then
+                read -e -q "enter new Token : " newpass
+                sed -i "4s/.*/PASSWORD='$(printf "%s" "$newpass")'/" /root/node-bot-wrt/.env 
+                break
+            elif [ "${q}" == '0' ]; then 
+                echo -e 'exit mode'
+                exit 0
+            break
+            else
+                echo -e "input error! Please only input 1 to 4 or 0"
+            fi
+        done 
+}
 uninstall(){
 while :; do
             read -e -p "do you want to uinstall node-bot-wrt ? [y/n]: " q
@@ -74,10 +121,20 @@ while :; do
                 rm -r /root/node-bot-wrt
                 rm -rf /usr/bin/ht-api /usr/bin/mmsms /etc/init.d/node-bot
                 break
+            elif [ "${q}" == 'n' ]; then 
+                echo -e 'exit mode'
+                exit 0
+            break
             else
                 echo -e "input error! Please only input 'y' or 'n'"
             fi
         done
+}
+upnode(){
+    wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot.bak && chmod +x /usr/bin/node-bot.bak
+    echo -e 'update node-bot successfully'
+    rm -rf /usr/bin/node-bot
+    mv /usr/bin/node-bot.bak /usr/bin/node-bot
 }
 install(){
     if [ -d "/root/node-bot-wrt" ]; then
@@ -202,6 +259,18 @@ case "${1}" in
   clear
   update
   ;;
+-un|upnode)
+   upnode
+   ;;
+-bck|backup)
+   backup
+   ;;
+-rst|restore)
+   restore
+   ;;
+-cc|changecfg)
+   changecfg
+   ;;
 -cb|add_bot_cron)
   addCrontab "botcb" "*/2 * * * *  /root/node-bot-wrt/lib/bot/cek-bot.sh"
   ;;

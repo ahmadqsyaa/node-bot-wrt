@@ -12,7 +12,7 @@ export const uptime= async (bot, msg, chatId, messageId, text) => {
     if (hours > 0 || days > 0) {
         result += `${hours} jam `;
     }
-    if (minutes > 0 || hours > 0 || days > 0) { // Tampilkan menit jika ada jam atau hari
+    if (minutes > 0 || hours > 0 || days > 0) {
         result += `${minutes} menit `;
     }
     result += `${seconds} detik`;
@@ -26,6 +26,6 @@ export const uptime= async (bot, msg, chatId, messageId, text) => {
     }
     var ups = getUptime()
     bot.sendMessage(chatId, ups, {
-        "reply_to_message_id": `${messageId}`
+        "reply_to_message_id": messageId
     })
 }

@@ -27,6 +27,7 @@ export const sub = async (bot, msg, chatId, messageId, text) => {
                         });
                     });
                 async function sen() {
+                    try {
                     await bot.sendDocument(chatId, './proxy.yaml', {
                         "reply_to_message_id": messageId
                     })
@@ -38,5 +39,8 @@ export const sub = async (bot, msg, chatId, messageId, text) => {
                         disable_web_page_preview: true
                     });
                     await bot.deleteMessage(chatId, messageId+1)
+                    } catch (e){
+                        bot.sendMessage(chatId, e, {reply_to_message_id: messageId})
+                    }
                 }
 }

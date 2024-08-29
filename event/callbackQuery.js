@@ -1,96 +1,65 @@
-import fs from 'fs'
-import {
-	listmenu,
-	keymenu
-} from '../lib/command.js'
-import {
-	proxy,
-	zeus
-} from '../lib/openclash.js'
-import execute from '../lib/execute.js'
-import getimg from '../lib/getimg.js'
-import {
-	commands
-} from '../lib/command.js'
-import adb from '../lib/adb.js'
+import fs from 'fs';
+import { listmenu, keymenu } from '../lib/command.js';
+import { proxy, zeus } from '../lib/openclash.js';
+import execute from '../lib/execute.js';
+import getimg from '../lib/getimg.js';
+import { commands } from '../lib/command.js';
+import adb from '../lib/adb.js';
+
 function clean(filePath) {
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) return console.error(`Error reading the file: ${err}`);
-            fs.writeFile(filePath, data.split('\n').filter(line => line.trim()).join('\n'), 'utf8', (err) => {
-                if (err) return err
-                return 'OK'
-            });
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) return console.error(`Error reading the file: ${err}`);
+        fs.writeFile(filePath, data.split('\n').filter(line => line.trim()).join('\n'), 'utf8', (err) => {
+            if (err) return err;
+            return 'OK';
         });
-    }
+    });
+}
+
 export const callbackQueryEvent = async (bot, query, chatId, messageId, data) => {
-	try {
-		console.log(query)
-		const options = {
-			chat_id: chatId,
-			message_id: messageId,
-			parse_mode: "html"
-		}
-		const option = {
-			parse_mode: "html",
-			disable_web_page_preview: true,
-			reply_to_message_id: messageId
-		}
-		const rik = {
-			reply: (text) => {
-				bot.sendMessage(chatId, text, option)
-			},
-			delete: () => {
-				bot.deleteMessage(chatId, messageId)
-			}
-		};
-		const opskey = {
-			reply_markup: JSON.stringify({
-				keyboard: keymenu,
-				one_time_keyboard: true
-			})
-		};
-		var messag = query.message.text
-		switch (data) {
-			case 'cancel':
-				await bot.editMessageText('canceled', options);
-				await rik.delete()
-				break
-			case 'menu':
-				bot.editMessageText(listmenu, options)
-				bot.sendMessage(chatId, 'Choose an option:', opskey);
-				break;
+    try {
+        console.log(query);
+        const options = {
+            chat_id: chatId,
+            message_id: messageId,
+            parse_mode: "html"
+        };
+        const option = {
+            parse_mode: "html",
+            disable_web_page_preview: true,
+            reply_to_message_id: messageId
+        };
+        const rik = {
+            reply: (text) => {
+                bot.sendMessage(chatId, text, option);
+            },
+            delete: () => {
+                bot.deleteMessage(chatId, messageId);
+            }
+        };
+
+        // Pastikan opskey diinisialisasi sebelum digunakan
+        var opskey = {
+            reply_markup: JSON.stringify({
+                keyboard: keymenu,
+                one_time_keyboard: true
+            })
+        };
+
+        var messag = query.message.text;
+
+        switch (data) {
+            case 'cancel':
+                await bot.editMessageText('canceled', options);
+                await rik.delete();
+                break;
+            case 'menu':
+                bot.editMessageText(listmenu, options);
+                bot.sendMessage(chatId, 'Choose an option:', opskey);
+                break;
 			case 'stop bot':
 				rik.reply('successfully terminate bot')
 				await execute('/etc/init.d/node-bot stop')
-				break;
-			case 'ser-other':
-				bot.editMessageText(query.message.text, {
-					chat_id: chatId,
-					message_id: messageId,
-					parse_mode: "html",
-					disable_web_page_preview: true,
-					reply_markup: {
-						inline_keyboard: [
-							[{
-									text: 'enable',
-									callback_data: 'service enable'
-								},
-								{
-									text: 'disable',
-									callback_data: 'service disable'
-								},
-								{
-									text: 'reload',
-									callback_data: 'service reload'
-								},
-								{
-									text: 'cancel',
-									callback_data: 'cancel'
-								}
-							]
-						]
-					}
-				});
 				break;
 			case 'proxy':
 				bot.editMessageText('loading', options)
@@ -289,38 +258,6 @@ export const callbackQueryEvent = async (bot, query, chatId, messageId, data) =>
 				await bot.editMessageText("success", options);
 				await bot.deleteMessage(chatId, messageId);
 				await execute('rm -rf *.png');
-				break;
-
-			case "stat-l":
-				await bot.editMessageText("other vnstati menu, please select below", {
-					chat_id: chatId,
-					message_id: messageId,
-					reply_markup: {
-						inline_keyboard: [
-							[{
-									text: 'br-lan',
-									callback_data: 'stat-b'
-								},
-								{
-									text: 'yearly',
-									callback_data: 'stat-y'
-								},
-								{
-									text: 'top',
-									callback_data: 'stat-t'
-								},
-								{
-									text: 'all',
-									callback_data: 'stat-all'
-								},
-								{
-									text: 'cancel',
-									callback_data: 'cancel'
-								}
-							]
-						]
-					},
-				});
 				break;
 			case "on-com":
 				bot.editMessageText("the command is active, please exit the chat \nand wait a few seconds. if it hasn't appeared yet \ntry again.", options);
@@ -642,9 +579,52 @@ export const callbackQueryEvent = async (bot, query, chatId, messageId, data) =>
 			} else {
 				await bot.editMessageText(`service ${app} not found`, options);
 			}
+		} else 
+		if (data.includes('vnstati')){
+		    try{
+		    await bot.editMessageText("loading", options);
+		    const acak = data.match(/(\S+\.png)$/);
+		    const filename = acak ? acak[0] : null;
+		    await execute(data);
+				await bot.sendPhoto(chatId, filename, {
+					caption: filename
+				});
+				await bot.editMessageText("success", options);
+				await bot.deleteMessage(chatId, messageId);
+				await execute('rm -rf *.png');
+		    } catch (error){
+		        bot.editMessageText(error, options)
+		    }
 		}
+		if (data.includes('vnsall')) {
+		const parms = data.split(' ')[1];
+        const vnsts1 = [
+            `vnstati -5 -i ${parms} -o 5.png`,
+            `vnstati -s -i ${parms} -o summary.png`,
+            `vnstati -h -i ${parms} -o hourly.png`,
+            `vnstati -d -i ${parms} -o daily.png`,
+            `vnstati -m -i ${parms} -o monthly.png`,
+            `vnstati -y -i ${parms} -o yearly.png`,
+            `vnstati --top 5 -i ${parms} -o top.png`
+        ];
 
+        for (const cmd1 of vnsts1) {
+            await execute(cmd1);
+        }
+        const imgAll1 = await getimg('./', '.png');
+       
+        for (const img1 of imgAll1) {
+            const photos = fs.readFileSync(`./${img1}`);
+            await bot.sendPhoto(chatId, photos);
+        }
+        
+        await bot.editMessageText("success", options);
+        await bot.deleteMessage(chatId, messageId);
+        await execute('rm -rf *.png');
+} 
+		
+		
 	} catch (error) {
-		bot.sendMessage(chatId, error)
+		bot.sendMessage(chatId, `error ${error}`, {reply_to_message_id: messageId})
 	}
 };

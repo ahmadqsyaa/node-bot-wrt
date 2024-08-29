@@ -6,6 +6,7 @@ import {
 import triginfo from '../lib/3ginfo.js'
 import fs from 'fs'
 export const messageEvent = async (bot, msg) => {
+  try {
 	const chatId = msg.chat.id;
 	const messageId = msg.message_id;
 	const options = {
@@ -89,8 +90,8 @@ export const messageEvent = async (bot, msg) => {
 						[{
 								text: 'yes',
 								callback_data: 'stop bot'
-							},
-							{
+							}],
+							[{
 								text: 'nooooo',
 								callback_data: 'cancel'
 							}
@@ -116,23 +117,35 @@ export const messageEvent = async (bot, msg) => {
 			bot.sendMessage(chatId, `service ${name}`, {
 				reply_markup: {
 					inline_keyboard: [
-						[{
+						    [{
 								text: 'start',
 								callback_data: 'service start'
 							},
 							{
 								text: 'stop',
 								callback_data: 'service stop'
-							},
-							{
+							}],
+							[{
 								text: 'restart',
 								callback_data: 'service restart'
 							},
 							{
-								text: 'other',
-								callback_data: 'ser-other'
-							}
-						]
+								text: 'enable',
+								callback_data: 'service enable'
+							}],
+							[{
+							    text: 'disable',
+							    callback_data: 'service disable'
+							},
+							{
+							    text: 'reload',
+							    callback_data: 'service reload'
+							}],
+							[{
+							    text: 'cancel',
+							    callback_data: 'cancel'
+							  
+							}]
 					]
 				},
 				reply_to_message_id: messageId
@@ -145,8 +158,8 @@ export const messageEvent = async (bot, msg) => {
 						[{
 								text: 'get proxy',
 								callback_data: 'proxy'
-							},
-							{
+							}],
+							[{
 								text: 'zeus ⚡',
 								callback_data: 'zeus'
 							}
@@ -200,8 +213,8 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'stop',
 								callback_data: 'passwall stop'
-							},
-							{
+							}],
+							[{
 								text: 'restart',
 								callback_data: 'passwall restart'
 							},
@@ -226,8 +239,8 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'stop',
 								callback_data: 'openclash stop'
-							},
-							{
+							}],
+							[{
 								text: 'restart',
 								callback_data: 'openclash restart'
 							},
@@ -330,40 +343,40 @@ export const messageEvent = async (bot, msg) => {
 				bot.sendMessage(chatId, "loading", {
 					"reply_to_message_id": `${messageId}`
 				});
-				var data = await bot.editMessageText(`vnstat ${in1}`, options)
-				if (!data) return edit(`total errors when running ${text}`)
+				var data = await execute(`vnstat ${in1}`)
+				if (!data) return bot.editMessageText(`total errors when running ${text}`, options)
 				bot.editMessageText(data, options);
 			}
 			break;
 		case 'vnstati':
-			bot.sendMessage(chatId, 'vnstati menu, please select below', {
+		    var parm = words.slice(1).join(' ');
+		    if (!parm){
+			bot.sendMessage(chatId, 'vnstati menu (br-lan), please select below\ncustom interface /vnstati <interface>', {
 				reply_markup: {
 					inline_keyboard: [
-						[{
-								text: '5 menit',
-								callback_data: 'stat-5'
-							},
-							{
-								text: 'daily',
-								callback_data: 'stat-d'
-							},
-							{
-								text: 'hourly',
-								callback_data: 'stat-h'
-							},
-							{
-								text: 'monthly',
-								callback_data: 'stat-text'
-							},
-							{
-								text: 'lainnya',
-								callback_data: 'stat-l'
-							}
-						]
+						[{text: '5 menit',callback_data: 'stat-5'},{text: 'br-lan',callback_data: 'stat-b'}],
+						[{text: 'daily',callback_data: 'stat-d'},{text: 'hourly',callback_data: 'stat-h'}],
+						[{text: 'monthly',callback_data: 'stat-m'},{text: 'top',callback_data: 'stat-t'}],
+						[{text: 'yearly',callback_data: 'stat-y'},{text: 'all',callback_data: 'stat-all'}],
+						[{text: 'menu', callback_data: 'menu'}, {text: 'cancel', callback_data: 'cancel'}]
 					]
 				},
 				"reply_to_message_id": `${messageId}`
 			});
+		    } else {
+		        bot.sendMessage(chatId, `vnstati ${parm}, please select below`, {
+				reply_markup: {
+					inline_keyboard: [
+						[{text: '5 menit',callback_data: `vnstati -5 10 -i ${parm} -o 5minute.png`},{text: parm,callback_data: `vnstati -s -i ${parm} -o summary.png`}],
+						[{text: 'daily',callback_data: `vnstati -d -i ${parm} -o daily.png`},{text: 'hourly',callback_data: `vnstati -h -i ${parm} -o hourly.png`}],
+						[{text: 'monthly',callback_data: `vnstati -m -i ${parm} -o monthly.png`},{text: 'top',callback_data: `vnstati --top 5 -i ${parm} -o top.png`}],
+						[{text: 'yearly',callback_data: `vnstati -y -i ${parm} -o yearly.png`},{text: 'all',callback_data: `vnsall ${parm}`}],
+						[{text: 'menu', callback_data: 'menu'}, {text: 'cancel', callback_data: 'cancel'}]
+					]
+				},
+				"reply_to_message_id": `${messageId}`
+			});
+		    }
 			break;
 		case 'command':
 			bot.sendMessage(chatId, 'settings command', {
@@ -376,16 +389,15 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'off',
 								callback_data: 'off-com'
-							},
-							{
+							}],
+							[{
 								text: 'update',
 								callback_data: 'up-com'
 							},
 							{
 								text: 'cancel',
 								callback_data: 'cancel'
-							}
-						]
+							}]
 					]
 				},
 				"reply_to_message_id": `${messageId}`
@@ -402,8 +414,8 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'button keyboard off',
 								callback_data: 'b-off'
-							},
-							{
+							}],
+							[{
 								text: 'cancel',
 								callback_data: 'cancel'
 							}
@@ -424,8 +436,8 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'del sms all/id',
 								callback_data: 'mm-d'
-							},
-							{
+							}],
+							[{
 								text: 'send sms',
 								callback_data: 'mm-s'
 							},
@@ -470,16 +482,16 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'get 5 sms',
 								callback_data: '5'
-							},
-							{
+							}],
+							[{
 								text: '1 sms outbox',
 								callback_data: '1-1'
 							},
 							{
 								text: '5 sms outbox',
 								callback_data: '5-5'
-							},
-							{
+							}],
+							[{
 								text: 'cancel',
 								callback_data: 'cancel'
 							}
@@ -533,8 +545,8 @@ export const messageEvent = async (bot, msg) => {
 								{
 									text: 'delete all',
 									callback_data: 'del-all'
-								},
-								{
+								}],
+								[{
 									text: 'cancel',
 									callback_data: 'cancel'
 								}
@@ -572,7 +584,7 @@ export const messageEvent = async (bot, msg) => {
 				reply_to_message_id: `${messageId}`
 			});
 			var data = await execute(`ps | grep ${app}`);
-			if (!data) return editMessageText(`total errors when running ${text}`, {
+			if (!data) return bot.editMessageText(`total errors when running ${text}`, {
 				reply_to_message_id: messageId
 			});
 
@@ -664,6 +676,7 @@ export const messageEvent = async (bot, msg) => {
 		    break
 		case 'ping':
 			var host = text.split(' ').slice(1).join(' ');
+			try{
 			if (!host) {
 				bot.sendMessage(chatId, "loading", {
 					"reply_to_message_id": `${messageId}`
@@ -679,6 +692,10 @@ export const messageEvent = async (bot, msg) => {
 				if (!data) return bot.editMessageText(`total errors when running ${text} ${host} timeout`, options)
 				await bot.editMessageText(`ping ${host} ${data}`, options);
 			}
+			} catch (error) {
+			    console.log(error)
+			    bot.sendMessage(chatId, error)
+			}
 			break;
 		case 'reboot':
 			bot.sendMessage(chatId, 'please choose reboot modem or reboot openwrt.', {
@@ -687,12 +704,12 @@ export const messageEvent = async (bot, msg) => {
 						[{
 								text: 'reboot modem',
 								callback_data: 'remodem'
-							},
-							{
+							}],
+							[{
 								text: 'reboot openwrt',
 								callback_data: 'reopenwrt'
-							},
-							{
+							}],
+							[{
 								text: 'cancel',
 								callback_data: 'cancel'
 							}
@@ -735,8 +752,8 @@ export const messageEvent = async (bot, msg) => {
 							{
 								text: 'adb sms',
 								callback_data: 'a-s'
-							},
-							{
+							}],
+							[{
 								text: 'adb refresh net',
 								callback_data: 'a-r'
 							},
@@ -806,7 +823,10 @@ export const messageEvent = async (bot, msg) => {
                         }
                     });
                 break 
-			//end 
+			//end
+	    }
+	} catch(err){
+	    bot.sendMessage(chatId, `Error: ${err}`, {reply_to_message_id: messageId})
 	}
 
 };

@@ -21,13 +21,13 @@ try {
 				bot.onText(new RegExp(`/${commandName}`, 'i'), (msg) => {
 					const chatId = msg.chat.id;
 					const messageId = msg.message_id;
-					if (process.env.USERID !== chatId.toString()) {
-						var msgden = `<blockquote>USER : @${msg.from.username}\nID : ${chatId}\n⚠️ ACCES DENIED ⚠️\n\njika kamu owner dari bot ini\nsilahkan ganti USERID menjadi USERID="${chatId}" di file .env</blockquote>`
-						return bot.sendMessage(chatId, msgden, {
-							"parse_mode": "html",
-							"reply_to_message_id": `${messageId}`
-						})
-					}
+					const owner = chatId == process.env.USERID ? true : false;
+					const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID menjadi USERID="${chatId}" di file .env</blockquote>`;
+					 if (!owner) return bot.sendMessage(chatId, msgden, {
+					        parse_mode: 'html',
+					        reply_to_message_id: messageId
+					    })
+					
 					let text;
 
 					if (msg.text) {
@@ -105,9 +105,13 @@ try {
 	};
 
 	bot.on('polling_error', (error) => {
-		if (error.response.statusCode === 409) {
+		if (error.response.statusCode){
+		    if (error.response.statusCode === 409) {
 			bot.sendMessage(process.env.USERID, '⚠️ bot is already running in the background, force off the bot ..');
 			process.kill()
+		} else {
+		    console.log('aman')
+		}
 		}
 		process.send(error);
 	});

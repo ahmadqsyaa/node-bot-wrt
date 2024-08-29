@@ -9,6 +9,13 @@ export const messageEvent = async (bot, msg) => {
   try {
 	const chatId = msg.chat.id;
 	const messageId = msg.message_id;
+	const userName = msg.chat.username
+	const owner = chatId == process.env.USERID ? true : false;
+					const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik node-bot -cc dan pilih menu lalu masukkan userid anda <b>${chatId}</b></blockquote>`;
+					 if (!owner) return bot.sendMessage(chatId, msgden, {
+					        parse_mode: 'html',
+					        reply_to_message_id: messageId
+					    })
 	const options = {
 		chat_id: chatId,
 		message_id: messageId + 1,
@@ -826,7 +833,7 @@ export const messageEvent = async (bot, msg) => {
 			//end
 	    }
 	} catch(err){
-	    bot.sendMessage(chatId, `Error: ${err}`, {reply_to_message_id: messageId})
+	    bot.sendMessage(process.env.USERID, `Error: ${err}`)
 	}
 
 };

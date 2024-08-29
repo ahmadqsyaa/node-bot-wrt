@@ -39,7 +39,7 @@ export const callbackQueryEvent = async (bot, query, chatId, messageId, data) =>
         };
 
         // Pastikan opskey diinisialisasi sebelum digunakan
-        var opskey = {
+        const opskey = {
             reply_markup: JSON.stringify({
                 keyboard: keymenu,
                 one_time_keyboard: true
@@ -55,7 +55,12 @@ export const callbackQueryEvent = async (bot, query, chatId, messageId, data) =>
                 break;
             case 'menu':
                 bot.editMessageText(listmenu, options);
-                bot.sendMessage(chatId, 'Choose an option:', opskey);
+                bot.sendMessage(chatId, 'Choose an option:', {
+            reply_markup: JSON.stringify({
+                keyboard: keymenu,
+                one_time_keyboard: true
+            }),disable_web_page_preview: true
+        });
                 break;
 			case 'stop bot':
 				rik.reply('successfully terminate bot')

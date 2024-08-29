@@ -2,6 +2,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
+import execute from './lib/execute.js'
 import {
 	fileURLToPath
 } from 'url';
@@ -103,18 +104,20 @@ try {
 			}
 		});
 	};
-
-	bot.on('polling_error', (error) => {
-		if (error.response.statusCode){
-		    if (error.response.statusCode === 409) {
-			bot.sendMessage(process.env.USERID, '⚠️ bot is already running in the background, force off the bot ..');
-			process.kill()
-		} else {
-		    console.log('aman')
-		}
-		}
-		process.send(error);
-	});
+bot.on('polling_error', (error) => {
+    if (error.response && error.response.statusCode) {
+        if (error.response.statusCode === 409) {
+            bot.sendMessage(process.env.USERID, '⚠️ bot is already running in the background, force off the bot ..');
+            execute(`[ "$(pgrep -f '/node-bot-wrt/index.js' | wc -l)" -gt 1 ] && pgrep -f "/node-bot-wrt/index.js" | tail -n 1 | xargs kill`);
+        } else {
+            console.log('aman');
+        }
+    } else {
+        console.log('Error tidak memiliki properti response atau statusCode');
+    }
+    process.send(error);
+});
+	
 
 	// Inisialisasi command handlers dan event handlers
 	initializeCommands(bot);

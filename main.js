@@ -22,13 +22,7 @@ try {
 				bot.onText(new RegExp(`/${commandName}`, 'i'), (msg) => {
 					const chatId = msg.chat.id;
 					const messageId = msg.message_id;
-					const owner = chatId == process.env.USERID ? true : false;
-					const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID menjadi USERID="${chatId}" di file .env</blockquote>`;
-					 if (!owner) return bot.sendMessage(chatId, msgden, {
-					        parse_mode: 'html',
-					        reply_to_message_id: messageId
-					    })
-					
+					const userName = msg.chat.username
 					let text;
 
 					if (msg.text) {
@@ -54,8 +48,13 @@ try {
 					} else {
 						text = "";
 					}
-
-					commandModule[commandName](bot, msg, chatId, messageId, text);
+					
+					const owner = chatId == process.env.USERID ? true : false;
+					 if (!owner) {
+					     return false 
+					 } else {
+					     commandModule[commandName](bot, msg, chatId, messageId, text);
+					 }
 				});
 			}
 		});
@@ -109,11 +108,7 @@ bot.on('polling_error', (error) => {
         if (error.response.statusCode === 409) {
             bot.sendMessage(process.env.USERID, '⚠️ bot is already running in the background, force off the bot ..');
             execute(`[ "$(pgrep -f '/node-bot-wrt/index.js' | wc -l)" -gt 1 ] && pgrep -f "/node-bot-wrt/index.js" | tail -n 1 | xargs kill`);
-        } else {
-            console.log('aman');
         }
-    } else {
-        console.log('Error tidak memiliki properti response atau statusCode');
     }
     process.send(error);
 });

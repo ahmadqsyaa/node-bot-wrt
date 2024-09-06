@@ -89,19 +89,19 @@ changecfg(){
             echo -e "1 (TOKEN) 2 (USERID) 3 (IPMODEM) 4 (PASSWORD) || 0 (exit mode)"
             read -e -p "what do you want to change? eg: 1: " q
             if [ "${q}" == '1' ]; then
-                read -e -q "enter new Token : " newtok
+                read -e -p "enter new Token : " newtok
                 sed -i "1s/.*/TOKEN='$(printf "%s" "$newtok")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '2' ]; then
-                read -e -q "enter new Userid : " newusr
+                read -e -p "enter new Userid : " newusr
                 sed -i "2s/.*/USERID='$(printf "%s" "$newusr")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '3' ]; then
-                read -e -q "enter new ipmodem : " newip
+                read -e -p "enter new ipmodem : " newip
                 sed -i "3s/.*/IPMODEM='$(printf "%s" "$newip")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '4' ]; then
-                read -e -q "enter new Token : " newpass
+                read -e -p "enter new Token : " newpass
                 sed -i "4s/.*/PASSWORD='$(printf "%s" "$newpass")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '0' ]; then 
@@ -112,7 +112,7 @@ changecfg(){
                 echo -e "input error! Please only input 1 to 4 or 0"
             fi
         done 
-}
+} 
 uninstall(){
 while :; do
             read -e -p "do you want to uinstall node-bot-wrt ? [y/n]: " q

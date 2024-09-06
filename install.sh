@@ -101,7 +101,7 @@ changecfg(){
                 sed -i "3s/.*/IPMODEM='$(printf "%s" "$newip")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '4' ]; then
-                read -e -p "enter new Token : " newpass
+                read -e -p "enter new Password : " newpass
                 sed -i "4s/.*/PASSWORD='$(printf "%s" "$newpass")'/" /root/node-bot-wrt/.env 
                 break
             elif [ "${q}" == '0' ]; then 

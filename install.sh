@@ -197,7 +197,27 @@ install(){
     cd node-bot-wrt
     echo -e "$info installing dependencies NPM ... $end"
     sleep 1
-    npm install && echo "npm install successful." || { echo "npm install failed."; exit 1; } 
+    retry=true
+    while $retry; do
+    npm install && {
+    echo -e "$success npm install successful.$end"
+    retry=false
+    } || {
+    read -p "${warn}npm install failed. retry? (y/n):$end " answer
+    case "$answer" in
+      [yY] )
+        echo -e "$info ietrying npm install...$end"
+        ;;
+      [nN] )
+        echo -e "$warn installation aborted.$end"
+        exit 1
+        ;;
+      * )
+        echo -e "$warn invalid input. Please enter y or n.$end"
+        ;;
+    esac
+    }
+    done
     cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
     cp /root/node-bot-wrt/.env.example /root/node-bot-wrt/.env
     cp /root/node-bot-wrt/lib/mmsms /usr/bin/

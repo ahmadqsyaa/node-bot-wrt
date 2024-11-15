@@ -1,11 +1,9 @@
 import execute from '../lib/execute.js'
-export const upfile = async (bot, msg, chatId, messageId, text) => {
-    const words = text.trim().split(/\s+/);
+export const cmds = ["upfile"];
+export const exec = async (bot, msg, chatId, messageId) => {
+    const words = msg.body.trim().split(/\s+/);
     var filedir = words.slice(1).join(' ');
-                if (!filedir) return bot.sendMessage(chatId, 'wrong format, send the document, photo & video, \nthen reply with the command /upfile /path/img.jpg or /path/video.mp4 \ndocument not require filename /upfile /path')
-                bot.sendMessage(chatId, "loading", {
-                    "reply_to_message_id": `${messageId}`
-                });
+                if (!filedir) return bot.reply('wrong format, send the document, photo & video, \nthen reply with the command /upfile /path/img.jpg or /path/video.mp4 \ndocument not require filename /upfile /path')
                 const replyToMessage = msg.reply_to_message;
                 if (replyToMessage) {
                     let fileId
@@ -31,20 +29,10 @@ export const upfile = async (bot, msg, chatId, messageId, text) => {
                             localFilePath = filedir;
                         }
                         var data = await execute(`wget -O "${localFilePath}" "${fileUrl}"`)
-                        bot.editMessageText(`success upload file to ${localFilePath}`, {
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                        });
+                        bot.reply(`success upload file to ${localFilePath}`);
                     } catch (er) {
-                        bot.editMessageText(`failed upload ${er}`, {
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                        });
+                        bot.reply(`failed upload ${er}`);
 
                     }
-                }
-}
+                } 
+};

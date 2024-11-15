@@ -2,121 +2,201 @@ import TelegramBot from 'node-telegram-bot-api';
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
-import execute from './lib/execute.js'
-import {
-	fileURLToPath
-} from 'url';
+import { fileURLToPath } from 'url';
+import execute from './lib/execute.js';
+import { createLog } from './lib/log.js';
+
+
+const logError = createLog();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const commands = [];
+
+const addCommand = (cmd) => {
+  commands.push(cmd);
+};
+
+const readDir = (cmdir) => {
+  const files = fs.readdirSync(cmdir);
+  for (let file of files) {
+    const fullPath = path.join(cmdir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      readDir(fullPath);
+    } else if (path.extname(fullPath) === '.js') {
+      import(fullPath).then(module => addCommand(module.default || module));
+    }
+  }
+};
+
+export const runNodeBot = async () => {
 try {
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = path.dirname(__filename);
-	const bot = new TelegramBot(process.env.TOKEN, {
-		polling: true
-	});
+  await new Promise((resolve) => {
+    readDir(path.join(__dirname, './command'));
+    resolve(true);
+  });
 
-	const initializeCommands = (bot) => {
-		const commandsPath = path.join(__dirname, 'command');
-		fs.readdirSync(commandsPath).forEach(async (file) => {
-			if (file.endsWith('.js')) {
-				const commandModule = await import(path.join(commandsPath, file));
-				const commandName = file.split('.')[0];
-				bot.onText(new RegExp(`/${commandName}`, 'i'), (msg) => {
-					const chatId = msg.chat.id;
-					const messageId = msg.message_id;
-					const userName = msg.chat.username
-					let text;
+  const bot = new TelegramBot(process.env.TOKEN, { polling: true });
 
-					if (msg.text) {
-						text = msg.text;
-					} else if (msg.photo) {
-						text = msg.caption || "";
-					} else if (msg.video) {
-						text = msg.caption || "";
-					} else if (msg.document) {
-						text = msg.caption || "";
-					} else if (msg.audio) {
-						text = msg.caption || "";
-					} else if (msg.voice) {
-						text = "";
-					} else if (msg.sticker) {
-						text = "";
-					} else if (msg.contact) {
-						text = "";
-					} else if (msg.location) {
-						text = "";
-					} else if (msg.venue) {
-						text = msg.venue.title || "";
-					} else {
-						text = "";
-					}
-					
-					const owner = chatId == process.env.USERID ? true : false;
-					 if (!owner) {
-					     return false 
-					 } else {
-					     commandModule[commandName](bot, msg, chatId, messageId, text);
-					 }
-				});
-			}
-		});
-	};
-
-	// Event handlers
-	const initializeEvents = (bot) => {
-		const eventsPath = path.join(__dirname, 'event');
-		fs.readdirSync(eventsPath).forEach(async (file) => {
-			if (file.endsWith('.js')) {
-				const eventModule = await import(path.join(eventsPath, file));
-				const eventName = file.split('.')[0];
-
-				if (eventName == 'callbackQuery') {
-					bot.on('callback_query', (query) => {
-						const chatId = query.message.chat.id;
-						const messageId = query.message.message_id;
-						const data = query.data;
-						eventModule[`${eventName}Event`](bot, query, chatId, messageId, data);
-					});
-				} else
-				if (eventName == 'video') {
-					bot.on('video', (msg) => {
-						const fileName = msg.video.file_id;
-						eventModule[`${eventName}Event`](bot, msg, fileName);
-					});
-				} else
-				if (eventName == 'photo') {
-					bot.on('photo', (msg) => {
-						const fileName = msg.photo[3].file_id;
-						eventModule[`${eventName}Event`](bot, msg, fileName);
-					});
-				} else
-				if (eventName == 'document') {
-					bot.on('document', (msg) => {
-						const fileName = msg.document.file_name;
-						eventModule[`${eventName}Event`](bot, msg, fileName);
-					});
-				} else {
-
-					bot.on(eventName, (msg) => {
-						process.send(msg);
-						eventModule[`${eventName}Event`](bot, msg);
-					});
-				}
-			}
-		});
-	};
-bot.on('polling_error', (error) => {
+  bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const messageId = msg.message_id;
+    const userName = msg.chat.username;
+    let text;
+    
+    if (msg.text) {
+      msg.body = msg.text;
+    } else if (msg.caption) {
+      msg.body = msg.caption;
+    } else {
+      msg.body = "";
+    }
+    if (!msg.body) return
+    const isCmd = msg.body.startsWith('/');
+    //const cmd = msg.body.trim().replace('/', "").split(" ")[0].toLowerCase();
+    const cmd = msg.body
+		.replace('/', "")
+		.trim()
+		.split(/ +/)
+		.shift()
+		.toLowerCase(); 
+    //console.log(msg.body)
+    const owner = chatId == process.env.USERID;
+    const options = {
+		chat_id: chatId,
+		message_id: messageId + 1,
+		parse_mode: "html",
+		disable_web_page_preview: true
+	}
+    const caseMsg = await import('./lib/message.js');
+    caseMsg.message(bot, cmd, msg, chatId, messageId, options);
+    switch (cmd) {
+	    case 'start':
+	        bot.sendMessage(chatId, `<b>Hi @${msg.from.username}, please click the menu button to view all bot commands.</b>`, {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{
+                                text: 'menu',
+                                callback_data: 'menu'
+                            }]
+                        ]
+                    },
+                    reply_to_message_id: messageId,
+                    parse_mode: "html"
+                }); 
+	        break
+	    case 'restartbot':
+	        //bot.sendMessage(chatId, 'ho')
+	        await bot.sendMessage(chatId, 'successful restart bot, please wait about 10 seconds', {
+	            reply_to_message_id: messageId
+	        })
+	        process.send('restart') 
+	        break
+	    case 'stopbot':
+			bot.sendMessage(chatId, 'are you sure you want to stop bots?', {
+				reply_markup: {
+					inline_keyboard: [
+						[{
+								text: 'yes',
+								callback_data: 'stop bot'
+							}],
+							[{
+								text: 'nooooo',
+								callback_data: 'cancel'
+							}
+						]
+					]
+				},
+				reply_to_message_id: messageId
+			});
+			break;
+   default:
+   
+   }
+    bot.reply = (text) => {
+    bot.editMessageText(`<b>${text}</b>`, {
+        chat_id: chatId,
+        message_id: messageId + 1,
+        parse_mode: "HTML",
+        disable_web_page_preview: true
+    });
+    };
+    bot.send = (text) => {
+    bot.sendMessageText(chatId, text, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true
+    });
+    };
+    if (!owner) {
+      const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik node-bot -cc dan ketik 2 lalu masukkan userid anda <b>${chatId}</b> lalu restart service.</blockquote>`;
+	  return bot.sendMessage(
+	      chatId,
+	      msgden,
+	      {
+	          parse_mode: 'html',
+	          reply_to_message_id: messageId
+	      })
+    } else {
+      for (let command of commands) {
+        if (command.cmds && command.cmds.includes(cmd)) {
+          await bot.sendChatAction(chatId, 'typing'); 
+          await bot.sendMessage(chatId, "loading..", {
+                    reply_to_message_id: messageId
+                });
+          await command.exec(bot, msg, chatId, messageId);
+        }
+      }
+    }
+  });
+  bot.on('callback_query', async (query) => {
+    const module = await import('./lib/callback.js');
+    const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
+    const data = query.data;
+    module.callback(bot, query, chatId, messageId, data);
+  });
+  bot.on('video', (msg) => {
+      const fileName = msg.video.file_id;
+      bot.sendMessage(msg.chat.id, `<blockquote>video uploaded successfully, if you want to upload to server reply to the file with the text /upfile /path/namefilevideo.mp4 for example /upfile /root/video.mp4</blockquote>`, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true
+    })
+  });
+  bot.on('photo', (msg) => {
+      const fileName = msg.photo[3].file_id;
+      bot.sendMessage(msg.chat.id, `<blockquote>photo uploaded successfully, if you want to upload to server reply to the file with the text /upfile /path/namefilephoto.png for example /upfile /root/img.png</blockquote>`, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true
+    });
+  });
+  bot.on('document', (msg) => {
+      const fileName = msg.document.file_name
+      bot.sendMessage(msg.chat.id, `<blockquote>${fileName} uploaded successfully, if you want to upload to server reply to the file with the text /upfile /path/dir for example /upfile /root</blockquote>`, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true
+    });
+  });
+  bot.on('polling_error', (error) => {
+    logError(error)
     if (error.response && error.response.statusCode) {
         if (error.response.statusCode === 409) {
             bot.sendMessage(process.env.USERID, '⚠️ bot is already running in the background, force off the bot ..');
-            execute(`[ "$(pgrep -f '/node-bot-wrt/index.js' | wc -l)" -gt 1 ] && pgrep -f "/node-bot-wrt/index.js" | tail -n 1 | xargs kill`);
+            process.send('stop')
+        } else if (error.response.statusCode === 401) {
+            bot.sendMessage(process.env.USERID, 'The API token used is invalid. Make sure the token used is correct and registered in BotFather, please check token and restart service.');
+            process.send('stop')
+        } else {
+            bot.sendMessage(process.env.USERID, `${error.message}\nforce restart service`)
+            process.send('restart')
         }
     }
-    process.send(error);
-});
-	
-
-	// Inisialisasi command handlers dan event handlers
-	initializeCommands(bot);
-	initializeEvents(bot);
-} catch (error) {
-	process.send(error)
+    console.log(error)
+  });
+} catch (e){
+    logError(e)
+    console.log(e)
 }
+};
+
+runNodeBot();

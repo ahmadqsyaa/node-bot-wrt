@@ -1,10 +1,10 @@
 import axios from 'axios'
 import execute from '../lib/execute.js'
 import fs from 'fs'
-export const sub = async (bot, msg, chatId, messageId, text) => {
-    var inp = text.split(' ').slice(1).join(' ');
+export const cmds = ["sub"];
+export const exec = async (bot, msg, chatId, messageId) => {
+        var inp = msg.body.split(' ').slice(1).join(' ');
                 if (!inp) return bot.sendMessage(chatId, 'Wrong format, /sub vmess:// (support vmess,vless dll)')
-                bot.sendMessage(chatId, 'loading',{reply_to_message_id:messageId})
                 var url = encodeURIComponent(inp);
                 var api = `https://sub.bonds.id/sub2?target=clash&url=${url}&insert=false&config=base%2Fdatabase%2Fconfig%2Fstandard%2Fstandard_redir.ini&filename=proxy.yaml&emoji=false&list=true&udp=true&tfo=true&expand=false&scv=true&fdn=false&sort=false&new_name=true`
                 axios({
@@ -19,12 +19,7 @@ export const sub = async (bot, msg, chatId, messageId, text) => {
                     })
                     .catch(error => {
                         console.error(error);
-                        bot.editMessageText(error, {
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                        });
+                        bot.reply(error);
                     });
                 async function sen() {
                     try {
@@ -32,15 +27,10 @@ export const sub = async (bot, msg, chatId, messageId, text) => {
                         "reply_to_message_id": messageId
                     })
                     await execute('rm -rf proxy.yaml')
-                    await bot.editMessageText('success', {
-                        chat_id: chatId,
-                        message_id: messageId+1,
-                        parse_mode: "html",
-                        disable_web_page_preview: true
-                    });
-                    await bot.deleteMessage(chatId, messageId+1)
+                    await bot.reply('success');
+                    bot.deleteMessage(chatId, messageId+1)
                     } catch (e){
-                        bot.sendMessage(chatId, e, {reply_to_message_id: messageId})
+                        bot.reply(e)
                     }
                 }
-}
+};

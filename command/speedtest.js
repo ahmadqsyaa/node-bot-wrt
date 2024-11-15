@@ -1,12 +1,11 @@
 import execute from '../lib/execute.js'
-export const speedtest = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["speedtest"];
+export const exec = async (bot, msg, chatId, messageId) => {
     function formas(bytes) {
         const mbps = bytes / 125000;
         return mbps.toFixed(2) + ' mbps';
     }
-    await bot.sendMessage(chatId, "loading", {
-                    "reply_to_message_id": messageId
-                });
+
                 try {
                     var stdout = await execute("speedtest --accept-license --f json");
                     const json = stdout.match(/\{[\s\S]*\}/)[0];
@@ -31,39 +30,19 @@ result url: <a href="${data.result.url}">link</a>
 </b>
 `;
                         console.log(result);
-                        await bot.editMessageText("success", {
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                        });
+                        await bot.reply("success");
                         await await bot.sendPhoto(chatId, data.result.url, {
                             "caption": result,
                             "parse_mode": "html",
                         });
                     } else if (data.type == "log") {
                         console.log("Data tidak valid");
-                        await bot.editMessageText(`<blockquote>${data.message+'\nPlease try again'}</blockquote>`, {
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true 
-                        });
+                        await bot.reply(`<blockquote>${data.message+'\nPlease try again'}</blockquote>`);
                     } else {
-                        await bot.editMessageText(data,{
-                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                        })
+                        await bot.reply(data)
                     }
                 } catch (error) {
                     console.log(error);
-                    await bot.editMessageText(`<blockquote>${error+'\nPlease try again'}</blockquote>`, {
-                        chat_id: chatId,
-                        message_id: messageId+1,
-                        parse_mode: "html",
-                        disable_web_page_preview: true
-                    });
+                    await bot.reply(`<blockquote>${error+'\nPlease try again'}</blockquote>`);
                 } 
-}
+};

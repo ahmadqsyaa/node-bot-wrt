@@ -1,5 +1,6 @@
 import execute from '../lib/execute.js'
-export const clear = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["clear"];
+export const exec = async (bot, msg, chatId, messageId) => {
     function format(bytes) {
         if (bytes < 1024) {
             return bytes + ' KB';
@@ -11,9 +12,6 @@ export const clear = async (bot, msg, chatId, messageId, text) => {
             return (bytes / 1073741824).toFixed(2) + ' TB';
         }
     }
-    bot.sendMessage(chatId, "loading", {
-        "reply_to_message_id": `${messageId}`
-    });
     var data = await execute('bash ./lib/sh/clear.sh')
     var res = JSON.parse(data)
     var result =`
@@ -24,12 +22,7 @@ export const clear = async (bot, msg, chatId, messageId, text) => {
 ├ after: ${format(res.sesudah)}
 ├ remove: ${format(res.cache_yang_dihapus)}
 ╰───────────────────────────╯
-</blockquote>
-`
-    bot.editMessageText(result, {
-        chat_id: chatId,
-        message_id: messageId+1,
-        parse_mode: "html",
-        disable_web_page_preview: true
-                });
-}
+</blockquote>`
+    
+    bot.reply(result)
+};

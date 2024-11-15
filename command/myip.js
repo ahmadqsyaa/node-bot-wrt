@@ -1,5 +1,6 @@
 import axios from 'axios'
-export const myip = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["myip"];
+export const exec = async (bot, msg, chatId, messageId) => {
     async function getip() {
         try {
             var response = await axios.get('http://ip-api.com/json');
@@ -34,16 +35,7 @@ export const myip = async (bot, msg, chatId, messageId, text) => {
             return error;
         }
     }
-    
-    bot.sendMessage(chatId, "loading", {
-                    "reply_to_message_id": `${messageId}`
-                });
                 var data = await getip().then(response => {
-                    bot.editMessageText(response, {
-                    chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                });
+                    bot.reply(response);
                 })
-}
+};

@@ -1,5 +1,7 @@
 import { listmenu, keymenu } from '../lib/command.js'
-export const menu = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["menu"];
+export const exec = async (bot, msg, chatId, messageId) => {
+    await bot.deleteMessage(chatId, messageId+1)
     const opskey = {
         reply_markup: JSON.stringify({
             keyboard: keymenu,
@@ -9,5 +11,5 @@ export const menu = async (bot, msg, chatId, messageId, text) => {
         parse_mode: 'html',
         disable_web_page_preview : true
     };
-    bot.sendMessage(chatId, listmenu, opskey)
-}
+    bot.sendMessage(chatId, listmenu, opskey) 
+};

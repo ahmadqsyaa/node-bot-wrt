@@ -1,14 +1,15 @@
 import execute from '../lib/execute.js'
-export const cmd = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["cmd"];
+export const exec = async (bot, msg, chatId, messageId) => {
     try {
-    var words = text.split(' ');
+    var words = msg.body.split(' ');
     var commd = words.slice(1).join(' ');
-    if (!commd) return bot.sendMessage(chatId, 'type /cmd <terminal command>, for example /cmd rm -rf /filesysteim')
-    var data = await execute(commd)
-    bot.sendMessage(chatId, data, {
-        "reply_to_message_id": `${messageId}`
-    });
-    } catch (err){
-        bot.sendMessage(chatId, err, {reply_to_message_id: messageId})
+    if (!commd){
+        bot.reply('type /cmd <terminal command>, for example /cmd rm -rf /filesysteim') 
     }
-}
+    var data = await execute(commd)
+       bot.reply(data)
+    } catch (err){
+       bot.reply(err)
+    }
+};

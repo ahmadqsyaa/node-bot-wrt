@@ -1,5 +1,6 @@
 import fs from 'fs'
-export const dlfile = async (bot, msg, chatId, messageId, text) => {
+export const cmds = ["dlfile"];
+export const exec = async (bot, msg, chatId, messageId) => {
     const fileTypes = new Map([
     ['.jpg', 'photo'],
     ['.jpeg', 'photo'],
@@ -19,18 +20,10 @@ export const dlfile = async (bot, msg, chatId, messageId, text) => {
         });
     });
 }
-    const words = text.trim().split(/\s+/);
-    bot.sendMessage(chatId, "loading", {
-                    "reply_to_message_id": `${messageId}`
-                });
+    const words = msg.body.trim().split(/\s+/);
                 var path = words.slice(1).join(' ');
                 if (!path) {
-                    return bot.editMessageText('wrong format, example: /dlfile /root/file.zip or /img.png or /video.mp4',{
-                        chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                    })
+                    return bot.reply('wrong format, example: /dlfile /root/file.zip or /img.png or /video.mp4')
                 } else {
                     checkFileExists(path)
                         .then(async (exists) => {
@@ -39,47 +32,22 @@ export const dlfile = async (bot, msg, chatId, messageId, text) => {
                                 if (fileExtension && fileTypes.has(fileExtension[0])) {
                                     if (fileTypes.get(fileExtension[0]) == "video") {
                                         await bot.sendVideo(chatId, path);
-                                        bot.editMessageText(`successful video download ${path}`,{
-                                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                                        })
+                                        bot.reply(`successful video download ${path}`)
                                     } else if (fileTypes.get(fileExtension[0]) == "photo") {
                                         await bot.sendPhoto(chatId, path);
-                                        bot.editMessageText(`successful img download ${path}`, {
-                                            chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                                        })
+                                        bot.reply(`successful img download ${path}`)
                                     }
                                 } else {
                                     await bot.sendDocument(chatId, path);
-                                    bot.editMessageText(`successful ${fileTypes.get(fileExtension[0])} download ${path}`, {
-                                        chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                                    })
+                                    bot.reply(`successful ${fileTypes.get(fileExtension[0])} download ${path}`)
                                 }
                             } else {
-                                bot.editMessageText(`files not found`, {
-                                    chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                                })
+                                bot.reply(`files not found`)
                             }
                         })
                         .catch((error) => {
                             console.error(error);
-                            bot.editMessageText(error, {
-                                chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                            })
+                            bot.reply(error)
                         });
                 }
-}
+};

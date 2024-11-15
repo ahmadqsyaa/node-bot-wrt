@@ -1,10 +1,8 @@
 import { domains } from '../lib/command.js'
 import execute from '../lib/execute.js'
-export const pingall = async (bot, msg, chatId, messageId, text) => {
-    bot.sendMessage(chatId, "loading", {
-                    "reply_to_message_id": `${messageId}`
-                });
-                async function ping(domain) {
+export const cmds = ["pingall"];
+export const exec = (bot, msg, chatId, messageId) => {
+    async function ping(domain) {
                     try {
                         const result = await execute(`ping -c 1 ${domain}`);
                         const timeMatch = result.match(/time=(\d+(\.\d+)?) ms/);
@@ -25,11 +23,6 @@ export const pingall = async (bot, msg, chatId, messageId, text) => {
 
                 pingall(domains).then(results => {
                     const text = results.join('\n'); 
-                    bot.editMessageText(`<blockquote>${text}</blockquote>`, {
-                        chat_id: chatId,
-                            message_id: messageId+1,
-                            parse_mode: "html",
-                            disable_web_page_preview: true
-                    });
+                    bot.reply(`<blockquote>${text}</blockquote>`);
                 });
-}
+};

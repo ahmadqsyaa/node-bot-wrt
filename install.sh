@@ -1,59 +1,64 @@
 #!/bin/bash
 
+info='\e[46;30m'
+warn='\e[41;37m'
+success='\e[42;30m'
+end='\e[0m'
+
 help(){
-    echo -e '***************************************'
-    echo -e '***** SIMPLE GUI BOT - NODE - WRT *****'
-    echo -e '***************************************'
+    echo -e '\e[31m────────────────────────────────────────────── \e[0m'
+    echo -e '\e[31m───────| \e[0m \e[35mSIMPLE GUI BOT - NODE - WRT\e[0m \e[31m|───────\e[0m'
+    echo -e '\e[31m──────────────────────────────────────────────\e[0m'
     echo -e ''
-    echo -e 'help, -h                show help usage' 
-    echo -e 'install, -i                 install bot'
-    echo -e 'uninstall, -rf            uninstall bot'
-    echo -e 'changecfg, -cc            change config'
-    echo -e 'backup, -bck              backup config'
-    echo -e 'restore, -rst            restore config'
-    echo -e 'update, -u                   update bot'
-    echo -e 'upnode, -un             update node-bot'
-    echo -e 'version, -v                 version bot'
-    echo -e 'status, -s               cek status bot'
-    echo -e 'start                         start bot'
-    echo -e 'stop                           stop bot'
-    echo -e 'restart                     restart bot'
-    echo -e 'add_bot_cron, -cb              add cron'
-    echo -e 'rm_bot_cron, -rcb             dell cron'
-    echo -e '***************************************'
+    echo -e 'help, -h                       \e[33mshow help usage\e[0m' 
+    echo -e 'install, -i                            \e[33minstall\e[0m'
+    echo -e 'uninstall, -rf                   \e[33muninstall bot\e[0m'
+    echo -e 'changecfg, -cc                   \e[33mchange config\e[0m'
+    echo -e 'backup, -bck                     \e[33mbackup config\e[0m'
+    echo -e 'restore, -rst                   \e[33mrestore config\e[0m'
+    echo -e 'update, -u                          \e[33mupdate bot\e[0m'
+    echo -e 'upnode, -un                    \e[33mupdate node-bot\e[0m'
+    echo -e 'version, -v                        \e[33mversion bot\e[0m'
+    echo -e 'status, -s                      \e[33mcek status bot\e[0m'
+    echo -e 'start                                \e[33mstart bot\e[0m'
+    echo -e 'stop                                  \e[33mstop bot\e[0m'
+    echo -e 'restart                            \e[33mrestart bot\e[0m'
+    echo -e 'add_bot_cron, -cb                     \e[33madd cron\e[0m'
+    echo -e 'rm_bot_cron, -rcb                    \e[33mdell cron\e[0m'
+    echo -e '\e[31m──────────────────────────────────────────────\e[0m'
 }
 status(){
     pgrep -f /root/node-bot-wrt/index.js > /dev/null
     if [ $? -eq 0 ]; then
-        echo -e "node-bot is running [$(pgrep -f /root/node-bot-wrt/index.js)]"
+        echo -e "$success node-bot is running [$(pgrep -f /root/node-bot-wrt/index.js)]$end"
     else
-        echo -e "node-bot not running"
+        echo -e "$warn node-bot not running $end"
     fi
 }
 version(){
     version=$(grep '"version":' /root/node-bot-wrt/package.json | sed -E 's/.*"version": "(.*)".*/\1/')
-    echo "version: $version" 
+    echo "$info version: $version $end" 
 }
 installpckg(){
     if [[ $(opkg list-installed | grep -c "^$1") == "0" ]]; then
-        echo -e "Installing ${1}..." && opkg install $1
+        echo -e "$success installing ${1}... $end" && opkg install $1
     fi
 }
 addCrontab() {
     if [ "$1" == "botcb" ]; then
         if crontab -l | grep -q 'cek-bot.sh'; then
-            echo "crontab bot already exists"
+            echo "$info crontab bot already exists $end"
             return 0
         fi
     else
-        echo "add bot to crontab ..."
+        echo "$info add bot to crontab ... $end"
     fi
 
     tmpfile=$(mktemp)
     crontab -l >"$tmpfile"
     printf '%s\n' "$2" >>"$tmpfile"
     crontab "$tmpfile" && rm -f "$tmpfile"
-    echo "Successfully add crontab"
+    echo "$info successfully add crontab $end"
 }
 removeCrontab(){
     tmpfile=$(mktemp)
@@ -62,7 +67,7 @@ removeCrontab(){
         sed -i "/cek-bot.sh/d" "$tmpfile"
     fi
     crontab "$tmpfile" && rm -f "$tmpfile"
-    echo "successfully delete crontab"
+    echo "$info successfully delete crontab $end"
 }
 createConfig(){
     sed -i "1s/.*/TOKEN='$(printf "%s" "$1")'/" /root/node-bot-wrt/.env
@@ -74,20 +79,20 @@ backup(){
     if [ -e "../.env" ]; then
         rm -rf ../.env
         cp /root/node-bot-wrt/.env /.env
-        echo -e "backup config successfully ../.env" 
+        echo -e "$success backup config successfully ../.env $end" 
     else
         cp /root/node-bot-wrt/.env /.env
-        echo -e "backup config successfully ../.env"
+        echo -e "$success backup config successfully ../.env $end"
     fi
 }
 restore(){
     mv ../.env /root/node-bot-wrt/.env
-    echo -e "restore config successfully"
+    echo -e "$success restore config successfully $end"
 }
 changecfg(){
     while :; do
-            echo -e "1 (TOKEN) 2 (USERID) 3 (IPMODEM) 4 (PASSWORD) || 0 (exit mode)"
-            read -e -p "what do you want to change? eg: 1: " q
+            echo -e "$info 1 (TOKEN) 2 (USERID) 3 (IPMODEM) 4 (PASSWORD) || 0 (exit mode) $end"
+            read -e -p "what do you want to change? eg: 1 : "  q
             if [ "${q}" == '1' ]; then
                 read -e -p "enter new Token : " newtok
                 sed -i "1s/.*/TOKEN='$(printf "%s" "$newtok")'/" /root/node-bot-wrt/.env 
@@ -109,15 +114,15 @@ changecfg(){
                 exit 0
             break
             else
-                echo -e "input error! Please only input 1 to 4 or 0"
+                echo -e "$warn input error! Please only input 1 to 4 or 0 $end"
             fi
         done 
 } 
 uninstall(){
 while :; do
-            read -e -p "do you want to uinstall node-bot-wrt ? [y/n]: " q
+            read -e -p "$info do you want to uinstall node-bot-wrt ? [y/n]: $end" q
             if [ "${q}" == 'y' ]; then
-                echo -e "uninstalling node-bot-wrt ..."
+                echo -e "$info uninstalling node-bot-wrt ... $end"
                 rm -r /root/node-bot-wrt
                 rm -rf /usr/bin/ht-api /usr/bin/mmsms /etc/init.d/node-bot
                 break
@@ -126,23 +131,23 @@ while :; do
                 exit 0
             break
             else
-                echo -e "input error! Please only input 'y' or 'n'"
+                echo -e "$warn input error! Please only input 'y' or 'n' $end"
             fi
         done
 }
 upnode(){
     wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot.bak && chmod +x /usr/bin/node-bot.bak
-    echo -e 'update node-bot successfully'
+    echo -e '$success update node-bot successfully $end'
     rm -rf /usr/bin/node-bot
     mv /usr/bin/node-bot.bak /usr/bin/node-bot
 }
 install(){
     if [ -d "/root/node-bot-wrt" ]; then
-        echo -e "node-bot-wrt already installed"
+        echo -e "$info node-bot-wrt already installed $end"
         while :; do
-            read -e -p "do you want to reinstall node-bot-wrt ? [y/n]: " q
+            read -e -p "$info do you want to reinstall node-bot-wrt ? [y/n]: $end" q
             if [ "${q}" == 'y' ]; then
-                echo -e "uninstalling node-bot-wrt ..."
+                echo -e "$info uninstalling node-bot-wrt ... $end"
                 rm -r /root/node-bot-wrt
                 rm -rf /usr/bin/ht-api /usr/bin/mmsms /etc/init.d/node-bot
                 break
@@ -150,7 +155,7 @@ install(){
                 echo -e "exit installation mode"
                 exit 0
             else
-                echo -e "input error! Please only input 'y' or 'n'"
+                echo -e "$warn input error! Please only input 'y' or 'n' $end"
             fi
         done
     fi
@@ -172,7 +177,7 @@ install(){
     done
     read -p "(opsional), for modem huawei please input ip address : " IPMODEM
     read -p "(opsional), for modem huawei please input password : " PASSWORD
-    echo -e "update package & install package ..."
+    echo -e "$info update package & install package ... $end"
     sleep 1
     opkg update
     installpckg "node-npm"
@@ -190,7 +195,7 @@ install(){
     cd
     git clone https://github.com/ahmadqsyaa/node-bot-wrt.git
     cd node-bot-wrt
-    echo -e "installing dependencies NPM ..."
+    echo -e "$info installing dependencies NPM ... $end"
     sleep 1
     npm install && echo "npm install successful." || { echo "npm install failed."; exit 1; } 
     cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
@@ -199,25 +204,25 @@ install(){
     cp /root/node-bot-wrt/lib/ht-api /usr/bin/
     chmod +x /usr/bin/ht-api /usr/bin/mmsms
     chmod +x /etc/init.d/node-bot
-    chmod +x /root/node-bot-wrt/lib/*.sh /root/node-bot-wrt/lib/bot/*.sh
+    chmod +x /root/node-bot-wrt/lib/*/*.sh
     createConfig "$TOKEN" "$USERID" "$IPMODEM" "$PASSWORD"
-    echo -e "test send message ..."
+    echo -e "$info test send message ... $end"
     sleep 1
     /root/node-bot-wrt/lib/bot/booting.sh
     sleep 1
-    echo -e "enable service ..."
+    echo -e "$info enable service ... $end"
     /etc/init.d/node-bot enable
     sleep 1
-    echo -e "start service ..."
+    echo -e "$info start service ... $end"
     /etc/init.d/node-bot start
     sleep 1
     addCrontab "botcb" "*/2 * * * *  /root/node-bot-wrt/lib/bot/cek-bot.sh"
     sleep 1
-    echo -e "bot successfully installed ..."
-    echo -e "join groups telegram https://t.me/infobot_wrt"
+    echo -e "$success bot successfully installed ... $end"
+    echo -e "$info join groups telegram https://t.me/infobot_wrt $end"
 }
 update(){
-    read -p "$(echo -e "do you want to continue the update? [y/n]: ")" q
+    read -p "$(echo -e "$info do you want to continue the update? [y/n]: ") $end" q
         if [ "${q}" == 'y' ]; then
             break
         else
@@ -231,7 +236,7 @@ update(){
     cp /root/node-bot-wrt/lib/ht-api /usr/bin/
     chmod +x /usr/bin/ht-api /usr/bin/mmsms
     chmod +x /etc/init.d/node-bot
-    chmod +x /root/node-bot-wrt/lib/*.sh /root/node-bot-wrt/lib/bot/*.sh
+    chmod +x /root/node-bot-wrt/lib/*/*.sh
     /etc/init.d/node-bot enable
     /etc/init.d/node-bot start
 }

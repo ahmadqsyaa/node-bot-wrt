@@ -137,7 +137,7 @@ while :; do
 }
 upnode(){
     wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot.bak && chmod +x /usr/bin/node-bot.bak
-    echo -e '$success update node-bot successfully $end'
+    echo -e "$success update node-bot successfully $end"
     rm -rf /usr/bin/node-bot
     mv /usr/bin/node-bot.bak /usr/bin/node-bot
 }
@@ -160,23 +160,23 @@ install(){
         done
     fi
     while :; do
-        read -p "$(echo -e "please input BOT TOKEN : ")" TOKEN
+        read -p "$(echo -e "$info please input BOT TOKEN : $end")" TOKEN
         if [[ -z "${TOKEN}" ]]; then
-            echo -e "TOKEN BOT cant be empty"
+            echo -e "$warn TOKEN BOT cant be empty$end"
         else
             break
         fi
     done
     while :; do
-        read -p "$(echo -e "please input USER ID : ")" USERID
+        read -p "$(echo -e "$info please input USER ID : $end")" USERID
         if [[ -z "${USERID}" ]]; then
-            echo -e "USERID cant be empty"
+            echo -e "$warn USERID cant be empty$end"
         else
             break
         fi
     done
-    read -p "(opsional), for modem huawei please input ip address : " IPMODEM
-    read -p "(opsional), for modem huawei please input password : " PASSWORD
+    read -p "$info (opsional), for modem huawei please input ip address : $end" IPMODEM
+    read -p "$info (opsional), for modem huawei please input password : $end" PASSWORD
     echo -e "$info update package & install package ... $end"
     sleep 1
     opkg update

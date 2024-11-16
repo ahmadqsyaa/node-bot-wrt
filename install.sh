@@ -203,7 +203,7 @@ install(){
     echo -e "$success npm install successful.$end"
     retry=false
     } || {
-    read -p "${warn}npm install failed. retry? (y/n):$end " answer
+    read -p "$warn npm install failed. retry? (y/n):$end " answer
     case "$answer" in
       [yY] )
         echo -e "$info ietrying npm install...$end"

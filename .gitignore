@@ -1,6 +1,7 @@
 .env
 # Logs
 *.log
+/logs/error-log.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -41,6 +42,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+package-lock.json
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

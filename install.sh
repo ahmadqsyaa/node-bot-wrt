@@ -47,18 +47,18 @@ installpckg(){
 addCrontab() {
     if [ "$1" == "botcb" ]; then
         if crontab -l | grep -q 'cek-bot.sh'; then
-            echo "$info crontab bot already exists $end"
+            echo -e "$info crontab bot already exists $end"
             return 0
         fi
     else
-        echo "$info add bot to crontab ... $end"
+        echo -e "$info add bot to crontab ... $end"
     fi
 
     tmpfile=$(mktemp)
     crontab -l >"$tmpfile"
     printf '%s\n' "$2" >>"$tmpfile"
     crontab "$tmpfile" && rm -f "$tmpfile"
-    echo "$info successfully add crontab $end"
+    echo -e "$info successfully add crontab $end"
 }
 removeCrontab(){
     tmpfile=$(mktemp)
@@ -67,7 +67,7 @@ removeCrontab(){
         sed -i "/cek-bot.sh/d" "$tmpfile"
     fi
     crontab "$tmpfile" && rm -f "$tmpfile"
-    echo "$info successfully delete crontab $end"
+    echo -e "$info successfully delete crontab $end"
 }
 createConfig(){
     sed -i "1s/.*/TOKEN='$(printf "%s" "$1")'/" /root/node-bot-wrt/.env

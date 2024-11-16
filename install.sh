@@ -145,7 +145,7 @@ install(){
     if [ -d "/root/node-bot-wrt" ]; then
         echo -e "$info node-bot-wrt already installed $end"
         while :; do
-            read -e -p "$info do you want to reinstall node-bot-wrt ? [y/n]: $end" q
+            read -p "$(echo -e "$info do you want to reinstall node-bot-wrt ? [y/n]: $end")" q
             if [ "${q}" == 'y' ]; then
                 echo -e "$info uninstalling node-bot-wrt ... $end"
                 rm -r /root/node-bot-wrt
@@ -175,8 +175,8 @@ install(){
             break
         fi
     done
-    read -p "$info (opsional), for modem huawei please input ip address : $end" IPMODEM
-    read -p "$info (opsional), for modem huawei please input password : $end" PASSWORD
+    read -p "$(echo -e "$info (opsional), for modem huawei please input ip address : $end")" IPMODEM
+    read -p "$(echo -e "$info (opsional), for modem huawei please input password : $end")" PASSWORD
     echo -e "$info update package & install package ... $end"
     sleep 1
     opkg update
@@ -203,7 +203,7 @@ install(){
     echo -e "$success npm install successful.$end"
     retry=false
     } || {
-    read -p "$warn npm install failed. retry? (y/n):$end " answer
+    read -p "$(echo -e "$warn npm install failed. retry? (y/n): $end")" answer
     case "$answer" in
       [yY] )
         echo -e "$info ietrying npm install...$end"

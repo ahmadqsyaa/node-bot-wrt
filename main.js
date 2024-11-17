@@ -63,6 +63,11 @@ try {
 		.toLowerCase(); 
     //console.log(msg.body)
     const owner = chatId == process.env.USERID;
+    const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik node-bot -cc dan ketik 2 lalu masukkan userid anda <b>${chatId}</b> lalu restart service.</blockquote>`;
+    if (!owner) return bot.sendMessage(chatId,msgden,{
+        parse_mode: 'html',
+    reply_to_message_id: messageId
+    })
     const options = {
 		chat_id: chatId,
 		message_id: messageId + 1,
@@ -128,16 +133,7 @@ try {
         disable_web_page_preview: true
     });
     };
-    if (!owner) {
-      const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik node-bot -cc dan ketik 2 lalu masukkan userid anda <b>${chatId}</b> lalu restart service.</blockquote>`;
-	  return bot.sendMessage(
-	      chatId,
-	      msgden,
-	      {
-	          parse_mode: 'html',
-	          reply_to_message_id: messageId
-	      })
-    } else {
+
       for (let command of commands) {
         if (command.cmds && command.cmds.includes(cmd)) {
           await bot.sendChatAction(chatId, 'typing'); 
@@ -147,7 +143,7 @@ try {
           await command.exec(bot, msg, chatId, messageId);
         }
       }
-    }
+    
   });
   bot.on('callback_query', async (query) => {
     const module = await import('./lib/callback.js');

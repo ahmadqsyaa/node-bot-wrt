@@ -128,7 +128,7 @@ try {
     });
     };
     bot.send = (text) => {
-    bot.sendMessageText(chatId, text, {
+    bot.sendMessage(chatId, text, {
         parse_mode: "HTML",
         disable_web_page_preview: true
     });

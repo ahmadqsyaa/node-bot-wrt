@@ -5,7 +5,8 @@
 
 ### 📝 Requitmenst
 
-* `node-npm v14++`
+* `node-npm v18++`
+* `openwrt v24++`
 * `nano`
 * `git`
 * `git-http`
@@ -29,22 +30,31 @@
 ### 🪄 fast Installation
 `1. copy and paste in terminal`
 
-```
+```bash
 wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh -O /usr/bin/node-bot && chmod +x /usr/bin/node-bot
 ```
 
 `2. installing bot`
 
-```
+```bash
 node-bot -i
 ```
 
 `help usage`
 
-```
+```bash
 node-bot -h
 ```
+`update bot`
 
+```bash
+node-bot -u
+```
+`update node-bot`
+
+```bash
+node-bot -un
+```
 
 #### ⚒️ Command Bot
 

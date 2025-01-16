@@ -253,7 +253,24 @@ function dataSET() {
     echo -e "choose 0/1"
   fi
 }
-
+function bandSET() {
+  login
+  choki
+  if [ -n "${1}" ]; then
+  netband=$(bandsett "$1")
+    setb=$(curl -s -X POST http://$ipmodem/api/net/net-mode -H "Host: $ipmodem" -H "Connection: keep-alive" -H "Accept: */*" -H "Origin: http://$ipmodem" -H "X-Requested-With: XMLHttpRequest" -H "__RequestVerificationToken: $token" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "Referer: http://$ipmodem/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" -d '<?xml version="1.0" encoding="UTF-8"?><request><NetworkMode>00</NetworkMode><NetworkBand>3FFFFFFF</NetworkBand><LTEBand>'"$netband"'</LTEBand></request>')
+    settb=$(echo $setb | awk -F "<response>" '{print $2}' | awk -F "</response>" '{print $1}')
+    if [ "$settb" = "OK" ]; then
+      echo -e "success"
+    else
+      echo -e "failed"
+    fi
+  else
+    echo -e "choose band"
+    echo -e "auto|850|900|1800|1900|2100|2300|2600"
+    echo -e "example: ht -bs 1800"
+  fi
+}
 function dataSTATUS() {
   login
   choki
@@ -522,6 +539,10 @@ case "${1}" in
 -m)
   shift
   dataSET "${@}"
+  ;;
+-bs)
+  shift
+  bandSET "${@}"
   ;;
 -ms)
   dataSTATUS

@@ -114,7 +114,7 @@ changecfg(){
                 exit 0
             break
             else
-                echo -e "$warn input error! Please only input 1 to 4 or 0 $end"
+                echo -e "input error! Please only input 1 to 4 or 0"
             fi
         done 
 } 

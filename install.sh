@@ -249,7 +249,10 @@ update(){
             echo -e "$info okay, exit$end"
             exit 0
         fi
-    cd /root/node-bot-wrt
+     while :; do
+        read -p "$(echo -e "$info do you want to continue the update? [y/n]: $end")" q
+        if [ "${q}" == 'y' ]; then
+        cd /root/node-bot-wrt
     git pull origin master
     cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
     cp /root/node-bot-wrt/lib/mmsms /usr/bin/
@@ -259,6 +262,12 @@ update(){
     chmod +x /root/node-bot-wrt/lib/*/*.sh
     /etc/init.d/node-bot enable
     /etc/init.d/node-bot start
+        else
+            echo -e "$info okay, exit$end"
+            exit 0
+        fi
+    done
+    
 }
 
 case "${1}" in

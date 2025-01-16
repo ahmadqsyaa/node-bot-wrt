@@ -241,34 +241,47 @@ install(){
     echo -e "$success bot successfully installed ... $end"
     echo -e "$info join groups telegram https://t.me/infobot_wrt $end"
 }
-update(){
-    read -p "$(echo -e "$info do you want to continue the update? [y/n]: $end")" q
-        if [ "${q}" == 'y' ]; then
+update() {
+    while :; do
+        read -p "$(echo -e "$info Do you want to continue the update? [y/n]: $end")" q
+        if [[ "$q" == "y" || "$q" == "Y" ]]; then
+            echo -e "$info Starting update process...$end"
+            
+            # Navigasi ke direktori proyek
+            cd /root/node-bot-wrt || {
+                echo -e "$error Failed to change directory. Exiting.$end"
+                exit 1
+            }
+            
+            # Tarik pembaruan dari Git
+            git pull origin master || {
+                echo -e "$error Failed to pull updates from Git. Exiting.$end"
+                exit 1
+            }
+
+            # Salin file dan set izin
+            cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
+            cp /root/node-bot-wrt/lib/mmsms /usr/bin/
+            cp /root/node-bot-wrt/lib/ht-api /usr/bin/
+            chmod +x /usr/bin/ht-api /usr/bin/mmsms
+            chmod +x /etc/init.d/node-bot
+            chmod +x /root/node-bot-wrt/lib/*/*.sh
+
+            # Aktifkan dan mulai layanan
+            /etc/init.d/node-bot enable
+            /etc/init.d/node-bot start
+            
+            echo -e "$info Update completed successfully.$end"
             break
-        else
-            echo -e "$info okay, exit$end"
+        elif [[ "$q" == "n" || "$q" == "N" ]]; then
+            echo -e "$info Update canceled. Exiting.$end"
             exit 0
-        fi
-     while :; do
-        read -p "$(echo -e "$info do you want to continue the update? [y/n]: $end")" q
-        if [ "${q}" == 'y' ]; then
-        cd /root/node-bot-wrt
-    git pull origin master
-    cp /root/node-bot-wrt/etc/init.d/node-bot /etc/init.d/
-    cp /root/node-bot-wrt/lib/mmsms /usr/bin/
-    cp /root/node-bot-wrt/lib/ht-api /usr/bin/
-    chmod +x /usr/bin/ht-api /usr/bin/mmsms
-    chmod +x /etc/init.d/node-bot
-    chmod +x /root/node-bot-wrt/lib/*/*.sh
-    /etc/init.d/node-bot enable
-    /etc/init.d/node-bot start
         else
-            echo -e "$info okay, exit$end"
-            exit 0
+            echo -e "$warn Invalid input. Please enter 'y' or 'n'.$end"
         fi
     done
-    
 }
+
 
 case "${1}" in
 -s|status)

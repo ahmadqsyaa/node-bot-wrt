@@ -242,11 +242,11 @@ install(){
     echo -e "$info join groups telegram https://t.me/infobot_wrt $end"
 }
 update(){
-    read -p "$(echo -e "$info do you want to continue the update? [y/n]: ") $end" q
+    read -p "$(echo -e "$info do you want to continue the update? [y/n]: $end")" q
         if [ "${q}" == 'y' ]; then
             break
         else
-            echo -e "okay, exit"
+            echo -e "$info okay, exit$end"
             exit 0
         fi
     cd /root/node-bot-wrt

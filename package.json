@@ -1,6 +1,6 @@
 {
   "name": "node-bot-wrt",
-  "version": "2.4 beta",
+  "version": "2.5 beta",
   "main": "index.js",
   "type": "module",
   "scripts": {

@@ -62,8 +62,11 @@ try {
 		.shift()
 		.toLowerCase(); 
     //console.log(msg.body)
-    const owner = chatId == process.env.USERID;
-    const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik node-bot -cc dan ketik 2 lalu masukkan userid anda <b>${chatId}</b> lalu restart service.</blockquote>`;
+    const userIds = process.env.USERID.split(',')
+    
+    const owner = userIds.some(id => id.trim() === chatId.toString());
+    
+    const msgden = `<blockquote>USER: @${userName}\nID: ${chatId}\n⚠️ ACCESS DENIED ⚠️\n\nJika kamu owner dari bot ini, silahkan ganti USERID anda dengan mengetik diterminal node-bot -cc dan ketik 2 lalu masukkan userid anda <b>${chatId}</b> lalu restart service.</blockquote>`;
     if (!owner) return bot.sendMessage(chatId,msgden,{
         parse_mode: 'html',
     reply_to_message_id: messageId
@@ -73,6 +76,12 @@ try {
 		message_id: messageId + 1,
 		parse_mode: "html",
 		disable_web_page_preview: true
+	}
+	if (msg.body === '/restartbot'){
+	    await bot.sendMessage(chatId, 'successful restart bot, please wait about 10 seconds', {
+	            reply_to_message_id: messageId
+	        })
+	    process.send('restart') 
 	}
     const caseMsg = await import('./lib/message.js');
     caseMsg.message(bot, cmd, msg, chatId, messageId, options);
@@ -90,13 +99,6 @@ try {
                     reply_to_message_id: messageId,
                     parse_mode: "html"
                 }); 
-	        break
-	    case 'restartbot':
-	        //bot.sendMessage(chatId, 'ho')
-	        await bot.sendMessage(chatId, 'successful restart bot, please wait about 10 seconds', {
-	            reply_to_message_id: messageId
-	        })
-	        process.send('restart') 
 	        break
 	    case 'stopbot':
 			bot.sendMessage(chatId, 'are you sure you want to stop bots?', {

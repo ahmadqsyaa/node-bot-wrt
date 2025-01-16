@@ -7,8 +7,8 @@ function fileExists(filePath) {
   return fs.existsSync(filePath);
 }
 
-if (fileExists('./logs/error-log.txt')) {
-  const log = await execute(`tail -n 10 "./logs/error-log.txt"`)
+if (fileExists('/tmp/logs/error-log.txt')) {
+  const log = await execute(`tail -n 10 "/tmp/logs/error-log.txt"`)
   if (!log) return bot.reply('log null')
   await bot.deleteMessage(chatId, messageId+1)
   bot.sendMessage(chatId, log, {

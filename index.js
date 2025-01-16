@@ -1,31 +1,42 @@
 import { spawn } from 'child_process';
-
+import execute from './lib/execute.js'
 const start = () => {
+  console.log("starting child process...");
+  
   const child = spawn('node', ['main.js', ...process.argv.slice(2)], {
     stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
   });
-
-  child.on('message', (msg) => {
-    if (msg === 'restart') {
-      child.kill();
-      start();
-    } else if (msg === 'stop') {
-      child.kill();
-    } else if (msg === 'uptime') {
+  child.on('message', async (msg) => {
+    switch (msg) {
+      case 'restart':
+        restart(child);
+        console.log('restart')
+        break;
+      case 'stop':
+        child.kill();
+        break;
+      case 'uptime':
         child.send(process.uptime());
+        break;
+      default:
+        console.log(`message from child: ${msg}`);
     }
   });
 
   child.on('exit', (code) => {
-    if (code !== null) {
-      start();
-    } else if (code == 'EFATAL'){
-      child.kill();
-      start();
+    if (code !== 0 && code !== null) {
+      console.log(`child exited with code ${code}. Restarting in 10 seconds...`);
+      setTimeout(() => start(), 10000);
     }
   });
 
-  child.on('error', (err) => console.log(err));
+  child.on('error', (err) => console.error(`child process error: ${err.message}`));
+};
+
+const restartChild = (child) => {
+  child.kill();
+  console.log('restarting child process in 10 seconds...');
+  setTimeout(() => execute('node-bot restart'), 10000);
 };
 
 start();

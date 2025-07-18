@@ -40,6 +40,7 @@ wget https://raw.githubusercontent.com/ahmadqsyaa/node-bot-wrt/master/install.sh
 node-bot -i
 ```
 
+
 ### 🧑‍💻 manual Installation
 `1. update package & install package`
 ```bash
@@ -89,8 +90,6 @@ chmod +x /usr/bin/* /etc/init.d/node-bot lib/*/*.sh
 node-bot -cb
 ```
 `10. bot is installed and ready to use`
-
-
 
 
 

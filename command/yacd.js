@@ -4,18 +4,26 @@ export const cmds = ["yacd"];
 export const exec = async (bot, msg, chatId, messageId) => {
     let secret
     let app
-    const oc = await execute('pgrep -f openclash')
-    const mh = await execute('pgrep -f mihomo')
-    if (oc){
-        secret = await execute('uci get openclash.config.dashboard_password');
-        app = "openclash"
-    } else if(mh){
-        secret = await execute('uci get mihomo.mixin.api_secret');
-        app = "mihomo"
+    let config
+    const oc = await execute('uci get openclash.config.enable')
+    const neko = await execute('uci get neko.cfg.enabled')
+    const niki = await execute ('uci get nikki.config.enabled')
+    if (parseInt(oc.trim(), 10) === 1) {
+      secret = await execute('uci get openclash.config.dashboard_password');
+      app = "openclash";
+    } else if (parseInt(neko.trim(), 10) === 1) {
+      config = await execute("uci -q get neko.cfg.selected_config");
+      secret = await execute(`awk -F':' '/secret/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' ${config}`);
+      app = "neko clash";
+    } else if (parseInt(nikki.trim(), 10) === 1) {
+      secret = await execute('uci get nikki.mixin.api_secret');
+      app = "nikki";
+    } else if (parseInt(oc.trim(), 10) === 1 && parseInt(neko.trim(), 10) === 1 && parseInt(nikki.trim(), 10) === 1) {
+      return bot.reply('openclash or neko clash is not running 🪄');
     } else {
-        bot.deleteMessage(chatId, messageId+1)
-        return bot.sendMessage(chatId, 'openclash or mihomo not running')
+      return bot.reply('Sorry brother, the bot only supports openclash or nekoclash & nikki 🫂.');
     }
+    
     
     
     try {
@@ -39,7 +47,7 @@ export const exec = async (bot, msg, chatId, messageId) => {
       return fetch(url, { method: 'GET', headers })
         .then(response => response.json())
         .then(result => ({ name: proxy.name, delay: result.delay || 0 }))
-        .catch(error => ({ name: proxy.name, delay: 0, error })); // Tangani error
+        .catch(error => ({ name: proxy.name, delay: 0, error }));
     });
     const pings = await Promise.all(delayPromises);
 
@@ -61,14 +69,15 @@ export const exec = async (bot, msg, chatId, messageId) => {
       inlineKeyboard.push(row);
     }
     
-    
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, `detected ${app} running, select proxies`, {
-        reply_markup: {
-            inline_keyboard: inlineKeyboard
-        },
-        reply_to_message_id: messageId
-    }); 
+    bot.editMessageText(`application detects the running ${app}, please select proxies.`, {
+					chat_id: chatId,
+					message_id: messageId+1,
+					parse_mode: "html",
+					disable_web_page_preview: true,
+					reply_markup: {
+						inline_keyboard: inlineKeyboard
+					},
+				})
     
   } catch (error) {
     console.error('Error:', error);

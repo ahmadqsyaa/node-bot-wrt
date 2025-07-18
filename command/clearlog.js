@@ -11,7 +11,7 @@ export const exec = async (bot, msg, chatId, messageId) => {
       const filePath = path.join(logDir, file);
       return fs.unlink(filePath);
     }));
-    await bot.reply('clear log success');
+    await bot.reply('clear log success ✅');
   } catch (error) {
     console.error("Error clearing logs:", error);
     await bot.reply('error clearing logs.');

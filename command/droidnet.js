@@ -1,7 +1,10 @@
 export const cmds = ["droidnet"];
 export const exec = (bot, msg, chatId, messageId) => {
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'NODE-BOT-WRT X DROIDMODEM\nmenu droidmodem\nsource: github.com/animegasan/luci-app-droidmodem', {
+    bot.sendMessage('NODE-BOT-WRT X DROIDMODEM\nmenu droidmodem\nsource: github.com/animegasan/luci-app-droidmodem', {
+			chat_id: chatId,
+			message_id: messageId+1,
+			parse_mode: "html",
+			disable_web_page_preview: true,
 				reply_markup: {
 					inline_keyboard: [
 						[{
@@ -16,8 +19,6 @@ export const exec = (bot, msg, chatId, messageId) => {
 							callback_data: 'droid-signal'
 						}]
 					]
-				},
-				reply_to_message_id: messageId,
-				disable_web_page_preview: true
+				}
 			});
 };

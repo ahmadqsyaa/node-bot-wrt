@@ -8,19 +8,20 @@ function fileExists(filePath) {
 }
 
 if (fileExists('/tmp/logs/error-log.txt')) {
-  const log = await execute(`tail -n 10 "/tmp/logs/error-log.txt"`)
+  const log = await execute(`tail -n 20 "/tmp/logs/error-log.txt"`)
   if (!log) return bot.reply('log null')
-  await bot.deleteMessage(chatId, messageId+1)
-  bot.sendMessage(chatId, log, {
-				reply_markup: {
-					inline_keyboard: [
-						[{
-								text: 'send file log',
-								callback_data: 'sfile'
-							}]
-					]
-				},
-				reply_to_message_id: messageId
+  bot.editMessageText(`<code>log</code>`, {
+      chat_id: chatId,
+      message_id: messageId+1,
+      parse_mode: "html",
+      disable_web_page_preview: true,
+	  reply_markup: {
+			inline_keyboard: [
+				[{
+					text: 'send file log',
+				    callback_data: 'sfile'
+				}]
+			]}
 			});
 } else {
   bot.reply('log file not found or log null')

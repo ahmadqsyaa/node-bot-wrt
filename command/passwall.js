@@ -1,9 +1,12 @@
 export const cmds = ["passwall"];
 export const exec = (bot, msg, chatId, messageId) =>{
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'menu passwall', {
-				reply_markup: {
-					inline_keyboard: [
+    bot.sendMessage('menu passwall', {
+        chat_id: chatId,
+        message_id: messageId+1,
+        parse_mode: "html",
+        disable_web_page_preview: true,
+		reply_markup: {
+			inline_keyboard: [
 						[{
 								text: 'start',
 								callback_data: 'passwall start'
@@ -21,8 +24,7 @@ export const exec = (bot, msg, chatId, messageId) =>{
 								callback_data: 'cancel'
 							}
 						]
-					]
-				},
-				reply_to_message_id: messageId
+				]
+				}
 			});
 };

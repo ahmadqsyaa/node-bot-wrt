@@ -1,9 +1,12 @@
 export const cmds = ["openclash"];
 export const exec = (bot, msg, chatId, messageId) => {
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'menu openclash', {
-				reply_markup: {
-					inline_keyboard: [
+    bot.editMessageText('menu openclash', {
+        chat_id: chatId,
+        message_id: messageId+1,
+        parse_mode: "html",
+        disable_web_page_preview: true,
+			reply_markup: {
+				inline_keyboard: [
 						[{
 								text: 'start',
 								callback_data: 'openclash start'

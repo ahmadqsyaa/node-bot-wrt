@@ -1,7 +1,10 @@
 export const cmds = ["setband"];
 export const exec = (bot, msg, chatId, messageId) => {
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'choose band:\n<b>auto|850|900|1800|1900|2100|2300|2600</b>', {
+    bot.editMessageText(chatId, 'choose band:\n<b>auto|850|900|1800|1900|2100|2300|2600</b>', {
+				chat_id: chatId,
+				message_id: messageId+1,
+				parse_mode: "html",
+				disable_web_page_preview: true,
 				reply_markup: {
 					inline_keyboard: [
 						[

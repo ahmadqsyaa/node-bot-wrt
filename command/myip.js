@@ -15,18 +15,16 @@ export const exec = async (bot, msg, chatId, messageId) => {
             var isp = data.isp;
 
            var result = `
- <blockquote>
-╭───────────────────────────╮
-├ ip: ${ip}
-├ country: ${country}
-├ region: ${region}
-├ city: ${city}
-├ lat: ${lat}
-├ lon: ${lon}
-├ timezone: ${timezone}
-├ isp: ${isp}
-╰───────────────────────────╯
-</blockquote>
+╭───────────────────────────────╮
+│ 🌐 IP         : ${ip}
+│ 🗺️ Country   : ${country}
+│ 🏞️ Region    : ${region}
+│ 🏙️ City      : ${city}
+│ 📍 Latitude  : ${lat}
+│ 📍 Longitude : ${lon}
+│ 🕰️ Timezone : ${timezone}
+│ 🛰️ ISP       : ${isp}
+╰───────────────────────────────╯
 `;
 
             return result;

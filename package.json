@@ -1,6 +1,6 @@
 {
   "name": "node-bot-wrt",
-  "version": "2.5 beta",
+  "version": "3.0 beta",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
   "description": "",
   "dependencies": {
     "axios": "^1.7.4",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "node-telegram-bot-api": "^0.66.0",
     "ws": "^8.18.0"
   }

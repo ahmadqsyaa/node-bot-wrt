@@ -33,7 +33,7 @@ const start = () => {
   child.on('error', (err) => console.error(`child process error: ${err.message}`));
 };
 
-const restartChild = (child) => {
+const restart= (child) => {
   child.kill();
   console.log('restarting child process in 10 seconds...');
   setTimeout(() => execute('node-bot restart'), 10000);

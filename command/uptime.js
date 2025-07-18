@@ -46,6 +46,10 @@ export const exec = async (bot, msg, chatId, messageId) => {
     const mainbot = process.uptime();
     const indukbot = await getUptime();
     const os = await getUptimeOs();
-    const result = `uptime os : ${format(os)}\nuptime bot : ${format(mainbot)}\nuptime induk bot : ${format(indukbot)}`;
+    const result = `
+🖥️ Uptime OS        : ${format(os)}
+🤖 Uptime Bot       : ${format(mainbot)}
+👨‍👦 Uptime Induk Bot : ${format(indukbot)}
+`;
     await bot.reply(result);
 };

@@ -1,7 +1,10 @@
 export const cmds = ["neko"];
 export const exec = (bot, msg, chatId, messageId) => {
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'menu neko clash', {
+    bot.editMessageText('menu neko clash', {
+				chat_id: chatId,
+				message_id: messageId+1,
+				parse_mode: "html",
+				disable_web_page_preview: true,
 				reply_markup: {
 					inline_keyboard: [
 						[{
@@ -18,7 +21,6 @@ export const exec = (bot, msg, chatId, messageId) => {
 							}
 						]
 					]
-				},
-				reply_to_message_id: messageId
+				}
 			});
 };

@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 import execute from './lib/execute.js';
 import { createLog } from './lib/log.js';
 
-
 const logError = createLog();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +28,18 @@ const readDir = (cmdir) => {
     }
   }
 };
+
+function checkInternet() {
+  return new Promise((resolve) => {
+    dns.lookup('telegram.org', (err) => {
+      if (err && err.code === "ENOTFOUND") {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
 
 export const runNodeBot = async () => {
 try {
@@ -54,6 +65,7 @@ try {
     }
     if (!msg.body) return
     const isCmd = msg.body.startsWith('/');
+    if (!isCmd) return
     //const cmd = msg.body.trim().replace('/', "").split(" ")[0].toLowerCase();
     const cmd = msg.body
 		.replace('/', "")
@@ -83,6 +95,7 @@ try {
 	        })
 	    process.send('restart') 
 	}
+	
     const caseMsg = await import('./lib/message.js');
     caseMsg.message(bot, cmd, msg, chatId, messageId, options);
     switch (cmd) {
@@ -192,7 +205,11 @@ try {
     console.log(error)
   });
 } catch (e){
+    const isOnline = await checkInternet();
     logError(e)
+    if(!isOnline) {
+        logError('internet off detected!!')
+    }
     console.log(e)
 }
 };

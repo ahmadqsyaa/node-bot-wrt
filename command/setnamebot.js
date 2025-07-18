@@ -1,7 +1,11 @@
 export const cmds = ["setnamebot"];
 export const exec = async (bot, msg, chatId, messageId) => {
-    await bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'please enter the name of the new bot',{reply_to_message_id: messageId})
+    bot.editMessageText('please enter the name of the new bot',{
+        chat_id: chatId,
+        message_id: messageId+1,
+        parse_mode: "html",
+        disable_web_page_preview: true
+    })
         bot.once('message', async (response) => {
             try {
                 var name = response.text;

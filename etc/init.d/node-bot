@@ -3,31 +3,58 @@
 
 START=99
 
+separator() {
+	echo -e "\033[36m─────────────────────────────────────────────\033[0m"
+}
+
+info() {
+	echo -e "\033[46;30m$1\033[0m"
+}
+
+warn() {
+	echo -e "\033[41;37m$1\033[0m"
+}
+
+success() {
+	echo -e "\033[42;30m$1\033[0m"
+}
+
 start() {
+	separator
 	pgrep -f /root/node-bot-wrt/index.js > /dev/null
-    if [ $? -eq 0 ]; then
-        echo -e "bot already running, stop bot..." 
+	if [ $? -eq 0 ]; then
+		warn "⚠️ bot already running, stopping first..."
 		kill $(pgrep -f /root/node-bot-wrt/index.js) >/dev/null 2>&1
+		sleep 2
 	fi
 	cd /root/node-bot-wrt && node /root/node-bot-wrt/index.js >/dev/null 2>&1 &
-	echo -e "starting bot..."
+	success "🚀 starting bot..."
+	separator
 	return 0
 }
 
 stop() {
-	echo -e "stoping bot.."
+	separator
+	info "🛑 stopping bot..."
+	sleep 2
 	kill $(pgrep -f /root/node-bot-wrt/index.js) >/dev/null 2>&1
+	success "✅ bot stopped"
+	separator
 }
 
 restart(){
 	stop
-	sleep 1
+	sleep 2
 	start
 }
 
 boot() {
+	separator
+	info "⏳ booting bot (waiting 10 sec)..."
 	sleep 10
 	/root/node-bot-wrt/lib/bot/booting.sh >/dev/null
 	(start >/dev/null 2>&1) &
+	success "✨ bot boot completed!"
+	separator
 	return 0
 }

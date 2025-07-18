@@ -1,8 +1,11 @@
 export const cmds = ["mihomo"];
 export const exec = (bot, msg, chatId, messageId) => {
-    bot.deleteMessage(chatId, messageId+1)
-    bot.sendMessage(chatId, 'menu mihomo', {
-				reply_markup: {
+    bot.editMessageText('menu mihomo', {
+        chat_id: chatId,
+        message_id: messageId+1,
+        parse_mode: "html",
+        disable_web_page_preview: true,
+			reply_markup: {
 					inline_keyboard: [
 						[{
 								text: 'start',
@@ -17,7 +20,6 @@ export const exec = (bot, msg, chatId, messageId) => {
 								callback_data: 'mihomo restart'
 							}]
 					]
-				},
-				reply_to_message_id: messageId
+				}
 			});
 };

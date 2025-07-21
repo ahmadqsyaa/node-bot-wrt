@@ -167,6 +167,32 @@ reinstall() {
     echo -e "$success Reinstall complete with configuration restored! $end"
 }
 
+installSilent() {
+    cd ~
+    git clone https://github.com/ahmadqsyaa/node-bot-wrt.git
+    cd node-bot-wrt
+
+    cp .env.example .env
+
+    echo -e "$info Installing NPM dependencies... $end"
+    while true; do
+        npm install && break || {
+            read -p "$(echo -e "$warn npm install failed. Retry? (y/n): $end")" retry
+            [[ "$retry" == "n" ]] && exit 1
+        }
+    done
+
+    cp etc/init.d/node-bot /etc/init.d/
+    cp lib/mmsms lib/ht-api /usr/bin/
+    chmod +x /usr/bin/* /etc/init.d/node-bot lib/*/*.sh
+
+    /root/node-bot-wrt/lib/bot/booting.sh
+    /etc/init.d/node-bot enable
+    /etc/init.d/node-bot start
+
+    addCrontab "botcb" "*/2 * * * * /root/node-bot-wrt/lib/bot/cek-bot.sh"
+}
+
 install() {
     if [ -d "/root/node-bot-wrt" ]; then
         echo -e "$info node-bot-wrt already exists $end"

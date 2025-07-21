@@ -20,7 +20,7 @@ separator(){
 help(){
     banner
     echo -e 'help, -h                       \e[33mshow help usage\e[0m' 
-    echo -e 'install, -i                            \e[33minstall\e[0m'
+    echo -e 'install/reinstall, -i                            \e[33minstall\e[0m'
     echo -e 'uninstall, -rf                   \e[33muninstall bot\e[0m'
     echo -e 'changecfg, -cc                   \e[33mchange config\e[0m'
     echo -e 'backup, -bck                     \e[33mbackup config\e[0m'

@@ -299,14 +299,23 @@ EOF
     sleep 1
     echo -e "$info checking the os version"
     sleep 2
-    ver=$(grep "DISTRIB_RELEASE" /etc/openwrt_release | cut -d"'" -f2)
-    major=$(echo "$ver" | cut -d. -f1)
-    if [ "$major" = "23" ] || [ "$major" = "24" ]; then
-       echo -e "$success $ver [OK]"
-    else
-       echo -e "$warn $ver version is too old, bey "
+    if [ -f /etc/openwrt_release ]; then
+    openwrt_release=$(grep "^DISTRIB_RELEASE=" /etc/openwrt_release | cut -d"'" -f2)
+    ver="$openwrt_release"
+	elif [ -f /etc/os-release ]; then
+    os_release=$(grep "^VERSION_ID=" /etc/os-release | cut -d'"' -f2)
+    ver="$os_release"
+	else
+    echo -e "$warn unable to detect OpenWrt version."
     exit 1
-    fi
+	fi
+	major="${ver%%.*}"
+	if [ "$major" = "23" ] || [ "$major" = "24" ]; then
+    echo -e "$success openWrt $ver [OK]"
+	else
+    echo -e "$warn openWrt $ver is not supported. please install it manually "
+    exit 1
+	fi
     sleep 2
     print_disk
     clear
